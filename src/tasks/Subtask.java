@@ -9,7 +9,21 @@ public class Subtask extends Task {
         this.epic= epic;
     }
 
-    public int getEpicId() {
-        return epicId;
+    public Epic getEpic() {
+        return epic;
+    }
+
+    public void setEpic(Epic epic) {
+        this.epic = epic;
+    }
+
+    @Override
+    public String toString() {
+        return "Subtask{" +
+                "name='" + name + '\'' +
+                ", Description='" + Description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                '}';
     }
 }

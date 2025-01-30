@@ -8,9 +8,11 @@ import java.util.List;
 
 public class TaskManager {
     private int id = 0;
-    private HashMap<Integer, Task> tasks;
-    private HashMap<Integer, Epic> epics;
-    private HashMap<Integer, Subtask> subtasks;
+    private HashMap<Integer, Task> tasks = new HashMap<>();
+    private HashMap<Integer, Epic> epics = new HashMap<>();
+    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
+
+
 
     public List<Task> gettingListOfAllTasks() {
         return new ArrayList<>(tasks.values());
@@ -56,30 +58,33 @@ public class TaskManager {
 
     public void creationTask(Task task, Status status) {
         task.setStatus(status); //установка статуса задачи
-        tasks.put(increaseId(), task);
+        task.setId(increaseId());
+        tasks.put(task.getId(), task);
     }
 
     public void creationEpic(Epic epic) {
+        epic.setId(increaseId());
         epic.setStatus(); //установка статуса эпика
-        epics.put(increaseId(), epic);
+        epics.put(epic.getId(), epic);
     }
 
     public void creationSubtask(Subtask subtask, Status status) {
+        subtask.setId(increaseId());
         subtask.setStatus(status); //установка статуса подзадачи
-        if (epics.containsKey(subtask.getId())) { //проверка на предмет входит ли эта подзадача в существующие эпики
-            Epic epic = epics.get(subtask.getId()); //блок кода добавляющий подзадачу в список подзадач эпика
-            List<Subtask> subtasks = epic.getSubtasks();
-            subtasks.add(subtask);
-            epic.setSubtasks(subtasks);
 
-            epic.setStatus(); //после изменения списка подзадач, актуализация статуса эпика, в который входи подзадача
+        Epic epic = subtask.getEpic();
+        if (epics.containsValue(epic)) { //существуют ли эпик этой подзадачи
+            List<Subtask> subtaskList = epic.getSubtasks();
+            subtaskList.add(subtask); //добавление в эпик данных о новой подзадаче
+            epic.setSubtasks(subtaskList);
 
-            epics.put(epic.getId(), epic);
+            epic.setStatus(); //актуализация статуса эпика
         } else {
-            System.out.println("Нет эпика с таким id");
-            return; //не может быть подзадачи вне эпика, метод завершается
+            System.out.println("Эпика с такой подзадачей нет");
+            return;
         }
-        subtasks.put(increaseId(), subtask);
+
+        subtasks.put(subtask.getId(), subtask);
     }
 
     public void taskUpdate(Task task) {
@@ -91,9 +96,9 @@ public class TaskManager {
     }
 
     public void subtaskUpdate(Subtask subtask) {
-        Epic epic = epics.get(subtask.getEpicId()); //блок кода актуализации статуса эпика, в который входит подзадача
+        Epic epic = subtask.getEpic(); //блок кода актуализации статуса эпика, в который входит подзадача
         epic.setStatus();
-        epics.put(subtask.getEpicId(), epic);
+        epics.put(epic.getId(), epic);
 
         subtasks.put(subtask.getId(), subtask);
     }
@@ -110,13 +115,14 @@ public class TaskManager {
     }
 
     public void deleteByIdSubtask(int id) {
-        int epicId = subtasks.get(id).getEpicId(); //получение id эпика для актуализации статуса
+        Epic epic = subtasks.get(id).getEpic(); //получение объекта эпика из подзадачи
+        List<Subtask> subtaskList = epic.getSubtasks();
+        subtaskList.remove(subtasks.get(id));
+        epic.setStatus();
 
         subtasks.remove(id);
 
-        Epic epic = epics.get(epicId); //блок актуализации статуса эпика после удаления подзадачи
-        epic.setStatus();
-        epics.put(epicId, epic);
+        epics.put(epic.getId(), epic);
     }
 
     public List<Subtask> gettingAllSubtasks(Epic epic) {
@@ -125,5 +131,17 @@ public class TaskManager {
 
     public int increaseId() {
         return id++;
+    }
+
+    public HashMap<Integer, Task> getTasks() {
+        return tasks;
+    }
+
+    public HashMap<Integer, Epic> getEpics() {
+        return epics;
+    }
+
+    public HashMap<Integer, Subtask> getSubtasks() {
+        return subtasks;
     }
 }
