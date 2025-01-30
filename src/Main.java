@@ -77,6 +77,5 @@ public class Main {
 
         System.out.println(taskManager.getByIdTask(1)); //блок проверки получения задач по id
         System.out.println(taskManager.getByIdEpics(4));
-
     }
 }
