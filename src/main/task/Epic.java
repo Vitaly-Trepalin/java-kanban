@@ -1,13 +1,19 @@
-package tasks;
+package main.task;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
-    private List<Subtask> subtasks = new ArrayList<>();
+    private List<Subtask> subtasks;
 
-    public Epic(String nameTask, String description) {
-        super(nameTask, description);
+    public Epic(String nameEpic, String description) {
+        super(nameEpic, description);
+        subtasks = new ArrayList<>();
+    }
+
+    public Epic(String nameEpic, String description, int id, Status status, List<Subtask> subtasks) {
+        super(nameEpic, description, id, status);
+        this.subtasks = subtasks;
     }
 
     public void setStatus() {
@@ -15,21 +21,22 @@ public class Epic extends Task {
             setStatus(Status.NEW);
         }
 
-        int numberOfCompletedTasks = 0; //блок в котором считаем количество подзадач с разным статусом
-        int numberOfSubtasksWithStatus = 0;
+        int numberOfSubtasksWithStatusDone = 0; //блок в котором считаем количество подзадач с разным статусом
+        int numberOfSubtasksWithStatusNew = 0;
         for (Subtask subtask : subtasks) {
             if (subtask.getStatus().equals(Status.DONE)) {
-                numberOfCompletedTasks++;
+                numberOfSubtasksWithStatusDone++;
             }
             if (subtask.getStatus().equals(Status.NEW)) {
-                numberOfSubtasksWithStatus++;
+
+                numberOfSubtasksWithStatusNew++;
             }
         }
 
-        if (numberOfCompletedTasks == subtasks.size()) {
-            setStatus(Status.DONE);
-        } else if (numberOfSubtasksWithStatus == subtasks.size()) {
+        if (numberOfSubtasksWithStatusNew == subtasks.size()) {
             setStatus(Status.NEW);
+        } else if (numberOfSubtasksWithStatusDone == subtasks.size()) {
+            setStatus(Status.DONE);
         } else {
             setStatus(Status.IN_PROGRESS);
         }
