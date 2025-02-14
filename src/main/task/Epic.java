@@ -54,11 +54,12 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return "Epic{" +
-                "name='" + name + '\'' +
-                ", status=" + status +
-                ", Description='" + Description + '\'' +
-                ", id=" + id +
+                "name='" + getNameTask() + '\'' +
+                ", status=" + getStatus() +
+                ", Description='" + getDescription() + '\'' +
+                ", id=" + getId() +
                 ", subtasks=" + subtasks +
                 '}';
     }
+
 }

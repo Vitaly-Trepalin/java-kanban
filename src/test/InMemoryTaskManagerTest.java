@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 class InMemoryTaskManagerTest {
@@ -35,10 +36,10 @@ class InMemoryTaskManagerTest {
     @Test
     void checkDeletingTasks() {
         InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
-        HashMap<Integer, Task> expectedHashMap = new HashMap<>();
+        Map<Integer, Task> expectedHashMap = new HashMap<>();
 
         taskManager.deletingTasks();
-        HashMap<Integer, Task> resultOfTheMethod = taskManager.getTasks();
+        Map<Integer, Task> resultOfTheMethod = taskManager.getTasks();
 
         Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod),"хеш-таблица c задачами не отчистилась");
     }
@@ -49,7 +50,7 @@ class InMemoryTaskManagerTest {
         HashMap<Integer, Epic> expectedHashMap = new HashMap<>();
 
         taskManager.deletingEpics();
-        HashMap<Integer, Epic> resultOfTheMethod = taskManager.getEpics();
+        Map<Integer, Epic> resultOfTheMethod = taskManager.getEpics();
 
         Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod),"хеш-таблица с эпиками не отчистилась");
     }
@@ -60,7 +61,7 @@ class InMemoryTaskManagerTest {
         HashMap<Integer, Subtask> expectedHashMap = new HashMap<>();
 
         taskManager.deletingSubtask();
-        HashMap<Integer, Subtask> resultOfTheMethod = taskManager.getSubtasks();
+        Map<Integer, Subtask> resultOfTheMethod = taskManager.getSubtasks();
 
         Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod),"хеш-таблица с подзадачами не " +
                 "отчистилась");
@@ -112,7 +113,7 @@ class InMemoryTaskManagerTest {
     @Test
     void checkTaskUpdate() {
         InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
-        HashMap<Integer, Task> mapTasks = taskManager.getTasks();
+        Map<Integer, Task> mapTasks = taskManager.getTasks();
         Integer keyOfTheItemToUpdate = 0;
         for (Integer key : mapTasks.keySet()) {
             keyOfTheItemToUpdate = key;
@@ -130,7 +131,7 @@ class InMemoryTaskManagerTest {
     @Test
     void checkEpicUpdate() {
         InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
-        HashMap<Integer, Epic> mapEpics = taskManager.getEpics();
+        Map<Integer, Epic> mapEpics = taskManager.getEpics();
         Integer keyOfTheItemToUpdate = 0;
         for (Integer key : mapEpics.keySet()) {
             keyOfTheItemToUpdate = key;
@@ -148,7 +149,7 @@ class InMemoryTaskManagerTest {
     @Test
     void checkSubtaskUpdate() {
         InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
-        HashMap<Integer, Subtask> mapSubtasks = taskManager.getSubtasks();
+        Map<Integer, Subtask> mapSubtasks = taskManager.getSubtasks();
         Integer keyOfTheItemToUpdate = 0;
         for (Integer key : mapSubtasks.keySet()) {
             keyOfTheItemToUpdate = key;

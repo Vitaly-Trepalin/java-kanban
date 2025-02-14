@@ -25,10 +25,10 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return "Subtask{" +
-                "name='" + name + '\'' +
-                ", Description='" + Description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
+                "name='" + getNameTask() + '\'' +
+                ", Description='" + getDescription() + '\'' +
+                ", id=" + getId() +
+                ", status=" + getStatus() +
                 '}';
     }
 }
