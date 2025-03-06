@@ -14,7 +14,7 @@ class SubtaskTest {
         Epic epic = new Epic("Второй эпик", "Описание второго эпика");
         Subtask subtask1 = new Subtask("Первая подзадача", "Описание первой подзадачи", 10,
                 Status.DONE, epic);
-        Subtask subtask2 = new Subtask("Первая подзадача", "Описание первой подзадачи",10,
+        Subtask subtask2 = new Subtask("Первая подзадача", "Описание первой подзадачи", 10,
                 Status.DONE, epic);
 
         Assertions.assertTrue(subtask1.equals(subtask2), "Подзадачи не равны друг другу");

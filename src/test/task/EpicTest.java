@@ -17,9 +17,9 @@ class EpicTest {
     @BeforeEach
     void preparationForTestingMethods() {
         epic = new Epic("Второй эпик", "Описание второго эпика");
-        Subtask subtask1 = new Subtask("Первая подзадача", "3333333333", 1, Status.DONE , epic);
-        Subtask subtask2 = new Subtask("Вторая подзадача", "4444444444", 2, Status.DONE , epic);
-        Subtask subtask3 = new Subtask("Третья подзадача", "5555555555", 3, Status.DONE , epic);
+        Subtask subtask1 = new Subtask("Первая подзадача", "3333333333", 1, Status.DONE, epic);
+        Subtask subtask2 = new Subtask("Вторая подзадача", "4444444444", 2, Status.DONE, epic);
+        Subtask subtask3 = new Subtask("Третья подзадача", "5555555555", 3, Status.DONE, epic);
         listSubtask = List.of(subtask1, subtask2, subtask3);
     }
 
@@ -31,7 +31,6 @@ class EpicTest {
 
         Assertions.assertTrue(epic.equals(epic1), "Эпики не равны друг другу");
     }
-
 
 
     @Test

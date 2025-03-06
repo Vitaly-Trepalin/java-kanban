@@ -43,7 +43,7 @@ class InMemoryTaskManagerTest {
         taskManager.deletingTasks();
         Map<Integer, Task> resultOfTheMethod = taskManager.getTasks();
 
-        Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod),"Хеш-таблица c задачами не отчистилась");
+        Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod), "Хеш-таблица c задачами не отчистилась");
     }
 
     @Test
@@ -54,7 +54,7 @@ class InMemoryTaskManagerTest {
         taskManager.deletingEpics();
         Map<Integer, Epic> resultOfTheMethod = taskManager.getEpics();
 
-        Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod),"Хеш-таблица с эпиками не отчистилась");
+        Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod), "Хеш-таблица с эпиками не отчистилась");
     }
 
     @Test
@@ -65,7 +65,7 @@ class InMemoryTaskManagerTest {
         taskManager.deletingSubtask();
         Map<Integer, Subtask> resultOfTheMethod = taskManager.getSubtasks();
 
-        Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod),"Хеш-таблица с подзадачами не " +
+        Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod), "Хеш-таблица с подзадачами не " +
                 "отчистилась");
     }
 
@@ -193,7 +193,7 @@ class InMemoryTaskManagerTest {
         Epic expectedEpic1 = new Epic("Первый эпик",
                 "Описание первого эпика", 0, Status.NEW, new ArrayList<>());
         Epic expectedEpic2 = new Epic("Второй эпик",
-                "Описание второго эпика",1, Status.NEW, new ArrayList<>());
+                "Описание второго эпика", 1, Status.NEW, new ArrayList<>());
         List<Epic> expectedEpicsList = new ArrayList<>(Arrays.asList(expectedEpic1, expectedEpic2));
 
         TaskManager taskManager = new InMemoryTaskManager();

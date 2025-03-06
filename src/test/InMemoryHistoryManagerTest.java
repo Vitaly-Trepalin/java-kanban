@@ -49,7 +49,7 @@ class InMemoryHistoryManagerTest {
     @Order(3)
     void checkAddTask() { //проверка добавления
         HistoryManager historyManager = addTasksInMemoryHistoryManager();
-        Task expectedTask = new Task("Четвёртая задача", "Описание четвёртой задачи", 8 ,
+        Task expectedTask = new Task("Четвёртая задача", "Описание четвёртой задачи", 8,
                 Status.NEW);
 
         historyManager.add(expectedTask);
