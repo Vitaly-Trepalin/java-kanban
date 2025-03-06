@@ -12,7 +12,7 @@ public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> tasks = new HashMap<>();
     private Map<Integer, Epic> epics = new HashMap<>();
     private Map<Integer, Subtask> subtasks = new HashMap<>();
-    private HistoryManager historyManager;
+    private final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
         this.historyManager = Managers.getDefaultHistory();
@@ -48,7 +48,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void deletingSubtask() {
         subtasks = new HashMap<>();
         for (Integer key : epics.keySet()) { //удаление всех подзадач приводит к изменению статуса всех эпиков на NEW
+            // и удаление всех подзадач в эпике
             Epic epic = epics.get(key);
+            epic.setSubtasks(new ArrayList<>());
             epic.setStatus();
             epics.put(key, epic);
         }
@@ -160,14 +162,17 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteByIdTask(int id) {
         tasks.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
     public void deleteByIdEpic(int id) {
         for (Subtask subtask : epics.get(id).getSubtasks()) { //блок удаления подзадач удаляемого эпика
+            historyManager.remove(subtask.getId());
             subtasks.remove(subtask.getId());
         }
         epics.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -180,6 +185,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.remove(id);
 
         epics.put(epic.getId(), epic);
+        historyManager.remove(id);
     }
 
     public List<Subtask> gettingAllSubtasks(Epic epic) {
