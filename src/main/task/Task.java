@@ -4,18 +4,18 @@ import java.util.Objects;
 
 public class Task {
     private String name;
-    private String Description;
+    private String description;
     private int id;
     private Status status;
 
     public Task(String nameTask, String description) {
         this.name = nameTask;
-        Description = description;
+        this.description = description;
     }
 
     public Task(String name, String description, int id, Status status) {
         this.name = name;
-        Description = description;
+        this.description = description;
         this.id = id;
         this.status = status;
     }
@@ -29,11 +29,11 @@ public class Task {
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public int getId() {
@@ -56,19 +56,19 @@ public class Task {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) && Objects.equals(Description, task.Description) && status == task.status;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, Description, id, status);
+        return Objects.hash(name, description, id, status);
     }
 
     @Override
     public String toString() {
         return "Task{" +
                 "name='" + name + '\'' +
-                ", Description='" + Description + '\'' +
+                ", Description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
                 '}';
