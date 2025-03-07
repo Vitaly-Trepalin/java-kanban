@@ -233,8 +233,8 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         InMemoryTaskManager that = (InMemoryTaskManager) o;
-        return id == that.id && Objects.equals(tasks, that.tasks) && Objects.equals(epics, that.epics) && Objects.equals
-                (subtasks, that.subtasks);
+        return id == that.id && Objects.equals(tasks, that.tasks) && Objects.equals(epics, that.epics) &&
+                Objects.equals(subtasks, that.subtasks);
     }
 
     @Override
