@@ -6,7 +6,7 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final static HashMap<Integer, Node<Task>> browsingHistory = new HashMap<>();
+    private static final HashMap<Integer, Node<Task>> browsingHistory = new HashMap<>();
     private static Node<Task> head;
     private static Node<Task> tail;
 
