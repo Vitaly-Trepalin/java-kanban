@@ -1,4 +1,4 @@
-package main;
+package main.task_tracker;
 
 public class Managers {
 

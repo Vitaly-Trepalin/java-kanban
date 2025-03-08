@@ -1,4 +1,4 @@
-package main.task;
+package main.task_tracker.task;
 
 import java.util.Objects;
 

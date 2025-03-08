@@ -1,6 +1,6 @@
-package main;
+package main.task_tracker;
 
-import main.task.Task;
+import main.task_tracker.task.Task;
 
 import java.util.*;
 

@@ -1,8 +1,8 @@
-package test;
+package main.test;
 
-import main.HistoryManager;
-import main.Managers;
-import main.TaskManager;
+import main.task_tracker.HistoryManager;
+import main.task_tracker.Managers;
+import main.task_tracker.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

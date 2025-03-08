@@ -1,10 +1,11 @@
-package main;
+package main.task_tracker;
 
-import main.task.Task;
+import main.task_tracker.task.Task;
 
 import java.util.List;
 
 public interface HistoryManager {
+
     void add(Task task);
 
     List<Task> getHistory();
