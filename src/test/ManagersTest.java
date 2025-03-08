@@ -1,4 +1,4 @@
-package main.test;
+package test;
 
 import main.HistoryManager;
 import main.Managers;
