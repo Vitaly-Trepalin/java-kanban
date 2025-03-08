@@ -1,8 +1,3 @@
-package test;
-
-import main.HistoryManager;
-import main.Managers;
-import main.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,4 @@
-package main;
-
-import main.task.Task;
+import task.Task;
 
 import java.util.*;
 

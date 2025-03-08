@@ -1,9 +1,7 @@
-package main;
-
-import main.task.Epic;
-import main.task.Status;
-import main.task.Subtask;
-import main.task.Task;
+import task.Epic;
+import task.Status;
+import task.Subtask;
+import task.Task;
 
 public class Main {
     private static InMemoryTaskManager inMemoryTaskManager;

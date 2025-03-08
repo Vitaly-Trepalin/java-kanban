@@ -1,12 +1,7 @@
-package test;
-
-import main.HistoryManager;
-import main.InMemoryHistoryManager;
-import main.InMemoryTaskManager;
-import main.task.Epic;
-import main.task.Status;
-import main.task.Subtask;
-import main.task.Task;
+import task.Epic;
+import task.Status;
+import task.Subtask;
+import task.Task;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
