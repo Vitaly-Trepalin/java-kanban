@@ -1,4 +1,4 @@
-package main.task_tracker.task;
+package main.task;
 
 public enum Status {
     NEW,

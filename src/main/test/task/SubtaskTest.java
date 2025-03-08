@@ -1,8 +1,8 @@
 package main.test.task;
 
-import main.task_tracker.task.Epic;
-import main.task_tracker.task.Status;
-import main.task_tracker.task.Subtask;
+import main.task.Epic;
+import main.task.Status;
+import main.task.Subtask;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,13 +1,13 @@
 package main.test;
 
-import main.task_tracker.HistoryManager;
-import main.task_tracker.InMemoryHistoryManager;
-import main.task_tracker.InMemoryTaskManager;
-import main.task_tracker.TaskManager;
-import main.task_tracker.task.Epic;
-import main.task_tracker.task.Status;
-import main.task_tracker.task.Subtask;
-import main.task_tracker.task.Task;
+import main.HistoryManager;
+import main.InMemoryHistoryManager;
+import main.InMemoryTaskManager;
+import main.TaskManager;
+import main.task.Epic;
+import main.task.Status;
+import main.task.Subtask;
+import main.task.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

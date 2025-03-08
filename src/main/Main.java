@@ -1,9 +1,9 @@
-package main.task_tracker;
+package main;
 
-import main.task_tracker.task.Epic;
-import main.task_tracker.task.Status;
-import main.task_tracker.task.Subtask;
-import main.task_tracker.task.Task;
+import main.task.Epic;
+import main.task.Status;
+import main.task.Subtask;
+import main.task.Task;
 
 public class Main {
     private static InMemoryTaskManager inMemoryTaskManager;

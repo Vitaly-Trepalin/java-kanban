@@ -1,7 +1,7 @@
 package main.test.task;
 
-import main.task_tracker.task.Status;
-import main.task_tracker.task.Task;
+import main.task.Status;
+import main.task.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
