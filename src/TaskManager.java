@@ -1,9 +1,6 @@
-package main;
-
-import main.task.Epic;
-import main.task.Status;
-import main.task.Subtask;
-import main.task.Task;
+import task.Epic;
+import task.Subtask;
+import task.Task;
 
 import java.util.List;
 
@@ -26,11 +23,11 @@ public interface TaskManager {
 
     Subtask getSubtask(int id);
 
-    void addNewTask(Task task, Status status);
+    void addNewTask(Task task);
 
     void addNewEpic(Epic epic);
 
-    void addNewSubtask(Subtask subtask, Status status);
+    void addNewSubtask(Subtask subtask);
 
     void taskUpdate(Task task);
 

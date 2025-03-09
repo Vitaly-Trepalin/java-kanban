@@ -1,18 +1,16 @@
-package main;
-
-import main.task.Epic;
-import main.task.Status;
-import main.task.Subtask;
-import main.task.Task;
+import task.Epic;
+import task.Subtask;
+import task.Task;
 
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0;
-    private Map<Integer, Task> tasks = new HashMap<>();
+    private Map<Integer, Task> tasks = new HashMap<>(); // данные поля не финальные, так как переприсваиваются в
+    // методах deletingTasks, deletingEpics, deletingSubtask
     private Map<Integer, Epic> epics = new HashMap<>();
     private Map<Integer, Subtask> subtasks = new HashMap<>();
-    private HistoryManager historyManager;
+    private final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
         this.historyManager = Managers.getDefaultHistory();
@@ -48,7 +46,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void deletingSubtask() {
         subtasks = new HashMap<>();
         for (Integer key : epics.keySet()) { //удаление всех подзадач приводит к изменению статуса всех эпиков на NEW
+            // и удаление всех подзадач в эпике
             Epic epic = epics.get(key);
+            epic.setSubtasks(new ArrayList<>());
             epic.setStatus();
             epics.put(key, epic);
         }
@@ -73,23 +73,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addNewTask(Task task, Status status) {
-        task.setStatus(status); //установка статуса задачи
+    public void addNewTask(Task task) {
         task.setId(increaseId());
         tasks.put(task.getId(), task);
     }
 
     @Override
     public void addNewEpic(Epic epic) {
+        epic.setStatus();
         epic.setId(increaseId());
-        epic.setStatus(); //установка статуса эпика
         epics.put(epic.getId(), epic);
     }
 
     @Override
-    public void addNewSubtask(Subtask subtask, Status status) {
+    public void addNewSubtask(Subtask subtask) {
         subtask.setId(increaseId());
-        subtask.setStatus(status); //установка статуса подзадачи
 
         Epic epic = subtask.getEpic();
         if (epics.containsValue(epic)) { //существуют ли эпик этой подзадачи
@@ -118,10 +116,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void epicUpdate(Epic epic) {
-        if (epics.containsKey(epic.getId()) &&
-                epic.getSubtasks().equals(epics.get(epic.getId()).getSubtasks())) {
+        if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
-
         } else {
             System.out.println("Эпика с id = " + epic.getId() + " в списке задач нет. Обновление невозможно");
         }
@@ -160,14 +156,19 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteByIdTask(int id) {
         tasks.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
     public void deleteByIdEpic(int id) {
-        for (Subtask subtask : epics.get(id).getSubtasks()) { //блок удаления подзадач удаляемого эпика
+        List<Subtask> subtasksOfTheEpicBeingDeleted = epics.get(id).getSubtasks();
+        for (Subtask subtask : subtasksOfTheEpicBeingDeleted) { //блок удаления подзадач из истории
+            // объекта HistoryManager и удаления подзадач из коллекции subtasks объекта InMemoryTaskManager
+            historyManager.remove(subtask.getId());
             subtasks.remove(subtask.getId());
         }
         epics.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -180,6 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.remove(id);
 
         epics.put(epic.getId(), epic);
+        historyManager.remove(id);
     }
 
     public List<Subtask> gettingAllSubtasks(Epic epic) {
@@ -222,13 +224,16 @@ public class InMemoryTaskManager implements TaskManager {
         this.subtasks = subtasks;
     }
 
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         InMemoryTaskManager that = (InMemoryTaskManager) o;
-        return id == that.id && Objects.equals(tasks, that.tasks) && Objects.equals(epics, that.epics) && Objects.equals
-                (subtasks, that.subtasks);
+        return id == that.id && Objects.equals(tasks, that.tasks) && Objects.equals(epics, that.epics) &&
+                Objects.equals(subtasks, that.subtasks);
     }
 
     @Override

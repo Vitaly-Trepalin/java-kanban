@@ -1,4 +1,4 @@
-package main.task;
+package task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,9 @@ import java.util.List;
 public class Epic extends Task {
     private List<Subtask> subtasks;
 
-    public Epic(String nameEpic, String description) {
-        super(nameEpic, description);
+    public Epic(String nameEpic, String description, Status status) {
+        super(nameEpic, description, status);
+        super.setStatus(Status.NEW);
         subtasks = new ArrayList<>();
     }
 
@@ -28,7 +29,6 @@ public class Epic extends Task {
                 numberOfSubtasksWithStatusDone++;
             }
             if (subtask.getStatus().equals(Status.NEW)) {
-
                 numberOfSubtasksWithStatusNew++;
             }
         }
