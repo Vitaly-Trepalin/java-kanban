@@ -58,26 +58,29 @@ class InMemoryHistoryManagerTest {
         InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
         //создание 3 задач
-        Task task1 = new Task("Первая задача", "Описание первой задачи");
-        Task task2 = new Task("Вторая задача", "Описание второй задачи");
-        Task task3 = new Task("Третья задача", "Описание третьей задачи");
-        inMemoryTaskManager.addNewTask(task1, Status.NEW);
-        inMemoryTaskManager.addNewTask(task2, Status.IN_PROGRESS);
-        inMemoryTaskManager.addNewTask(task3, Status.DONE);
+        Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW);
+        Task task2 = new Task("Вторая задача", "Описание второй задачи", Status.IN_PROGRESS);
+        Task task3 = new Task("Третья задача", "Описание третьей задачи", Status.DONE);
+        inMemoryTaskManager.addNewTask(task1);
+        inMemoryTaskManager.addNewTask(task2);
+        inMemoryTaskManager.addNewTask(task3);
 
         //создание 2 эпиков
-        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика");
-        Epic epic2 = new Epic("Второй эпик", "Описание второго эпика");
+        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика", Status.NEW);
+        Epic epic2 = new Epic("Второй эпик", "Описание второго эпика", Status.NEW);
         inMemoryTaskManager.addNewEpic(epic1);
         inMemoryTaskManager.addNewEpic(epic2);
 
         //создание 3 подзадач
-        Subtask subtask1 = new Subtask("Первая подзадача", "Описание первой подзадачи", epic1);
-        Subtask subtask2 = new Subtask("Вторая подзадача", "Описание второй подзадачи", epic1);
-        Subtask subtask3 = new Subtask("Третья подзадача", "Описание третьей подзадачи", epic2);
-        inMemoryTaskManager.addNewSubtask(subtask1, Status.IN_PROGRESS);
-        inMemoryTaskManager.addNewSubtask(subtask2, Status.DONE);
-        inMemoryTaskManager.addNewSubtask(subtask3, Status.NEW);
+        Subtask subtask1 = new Subtask("Первая подзадача",
+                "Описание первой подзадачи", Status.NEW, epic1);
+        Subtask subtask2 = new Subtask("Вторая подзадача",
+                "Описание второй подзадачи", Status.IN_PROGRESS, epic1);
+        Subtask subtask3 = new Subtask("Третья подзадача",
+                "Описание третьей подзадачи", Status.DONE, epic2);
+        inMemoryTaskManager.addNewSubtask(subtask1);
+        inMemoryTaskManager.addNewSubtask(subtask2);
+        inMemoryTaskManager.addNewSubtask(subtask3);
 
         //добавление в InMemoryHistoryManager
         historyManager.add(task1);
@@ -97,26 +100,29 @@ class InMemoryHistoryManagerTest {
         List<Task> expectedTaskListInHistory = new ArrayList<>();
 
         //создание 3 задач
-        Task task1 = new Task("Первая задача", "Описание первой задачи");
-        Task task2 = new Task("Вторая задача", "Описание второй задачи");
-        Task task3 = new Task("Третья задача", "Описание третьей задачи");
-        inMemoryTaskManager.addNewTask(task1, Status.NEW);
-        inMemoryTaskManager.addNewTask(task2, Status.IN_PROGRESS);
-        inMemoryTaskManager.addNewTask(task3, Status.DONE);
+        Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW);
+        Task task2 = new Task("Вторая задача", "Описание второй задачи", Status.IN_PROGRESS);
+        Task task3 = new Task("Третья задача", "Описание третьей задачи", Status.DONE);
+        inMemoryTaskManager.addNewTask(task1);
+        inMemoryTaskManager.addNewTask(task2);
+        inMemoryTaskManager.addNewTask(task3);
 
         //создание 2 эпиков
-        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика");
-        Epic epic2 = new Epic("Второй эпик", "Описание второго эпика");
+        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика", Status.NEW);
+        Epic epic2 = new Epic("Второй эпик", "Описание второго эпика", Status.NEW);
         inMemoryTaskManager.addNewEpic(epic1);
         inMemoryTaskManager.addNewEpic(epic2);
 
         //создание 3 подзадач
-        Subtask subtask1 = new Subtask("Первая подзадача", "Описание первой подзадачи", epic1);
-        Subtask subtask2 = new Subtask("Вторая подзадача", "Описание второй подзадачи", epic1);
-        Subtask subtask3 = new Subtask("Третья подзадача", "Описание третьей подзадачи", epic2);
-        inMemoryTaskManager.addNewSubtask(subtask1, Status.IN_PROGRESS);
-        inMemoryTaskManager.addNewSubtask(subtask2, Status.DONE);
-        inMemoryTaskManager.addNewSubtask(subtask3, Status.NEW);
+        Subtask subtask1 = new Subtask("Первая подзадача",
+                "Описание первой подзадачи", Status.NEW, epic1);
+        Subtask subtask2 = new Subtask("Вторая подзадача",
+                "Описание второй подзадачи", Status.IN_PROGRESS, epic1);
+        Subtask subtask3 = new Subtask("Третья подзадача",
+                "Описание третьей подзадачи", Status.DONE, epic2);
+        inMemoryTaskManager.addNewSubtask(subtask1);
+        inMemoryTaskManager.addNewSubtask(subtask2);
+        inMemoryTaskManager.addNewSubtask(subtask3);
 
         //добавление задач, эпиков, подзадач в ожидаемый список
         expectedTaskListInHistory.add(task1);

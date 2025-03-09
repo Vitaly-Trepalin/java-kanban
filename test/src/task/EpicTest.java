@@ -13,7 +13,7 @@ class EpicTest {
 
     @BeforeEach
     void preparationForTestingMethods() {
-        epic = new Epic("Второй эпик", "Описание второго эпика");
+        epic = new Epic("Второй эпик", "Описание второго эпика", Status.NEW);
         Subtask subtask1 = new Subtask("Первая подзадача", "3333333333", 1, Status.DONE, epic);
         Subtask subtask2 = new Subtask("Вторая подзадача", "4444444444", 2, Status.DONE, epic);
         Subtask subtask3 = new Subtask("Третья подзадача", "5555555555", 3, Status.DONE, epic);
@@ -22,41 +22,42 @@ class EpicTest {
 
     @Test
     void checkingEqualityOfClassInstancesEpic() {
-        ArrayList<Subtask> arrayList = new ArrayList<>();
-        Epic epic = new Epic("Второй эпик", "Описание второго эпика", 10, Status.DONE, arrayList);
-        Epic epic1 = new Epic("Второй эпик", "Описание второго эпика", 10, Status.DONE, arrayList);
+        Epic expectedEpic = new Epic("Второй эпик",
+                "Описание второго эпика", 10, Status.DONE, new ArrayList<>());
+        Epic actualEpic = new Epic("Второй эпик",
+                "Описание второго эпика", 10, Status.DONE, new ArrayList<>());
 
-        Assertions.assertTrue(epic.equals(epic1), "Эпики не равны друг другу");
+        Assertions.assertEquals(expectedEpic, actualEpic, "Эпики не равны друг другу");
     }
 
 
     @Test
     void checkSetStatus() {
-        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика", 10, Status.NEW, listSubtask);
+        Epic epic1 = new Epic("Первый эпик",
+                "Описание первого эпика", 10, Status.NEW, listSubtask);
         Status expectedStatus = Status.DONE;
 
         epic1.setStatus();
         Status resultOfTheMethod = epic1.getStatus();
 
-        Assertions.assertTrue(expectedStatus == resultOfTheMethod, "статус высчитан неверно");
+        Assertions.assertSame(expectedStatus, resultOfTheMethod, "статус высчитан неверно");
     }
 
     @Test
     void checkGetSubtasks() {
-        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика", 10, Status.NEW, listSubtask);
+        Epic epic1 = new Epic("Первый эпик",
+                "Описание первого эпика", 10, Status.NEW, listSubtask);
 
         List<Subtask> resultOfTheMethod = epic1.getSubtasks();
 
-        Assertions.assertTrue(listSubtask.equals(resultOfTheMethod), "списки подзадач не одинаковы");
+        Assertions.assertEquals(listSubtask, resultOfTheMethod, "списки подзадач не одинаковы");
     }
 
     @Test
     void checkSetSubtasks() {
-        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика");
-
         epic.setSubtasks(listSubtask);
         List<Subtask> resultOfTheMethod = epic.getSubtasks();
 
-        Assertions.assertTrue(listSubtask.equals(resultOfTheMethod), "списки подзадач не одинаковы");
+        Assertions.assertEquals(listSubtask, resultOfTheMethod, "списки подзадач не одинаковы");
     }
 }

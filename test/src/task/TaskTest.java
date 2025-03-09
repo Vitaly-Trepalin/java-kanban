@@ -10,7 +10,7 @@ class TaskTest {
         Task task1 = new Task("Первая задача", "Описание первой задачи", 10, Status.NEW);
         Task task2 = new Task("Первая задача", "Описание первой задачи", 10, Status.NEW);
 
-        Assertions.assertTrue(task1.equals(task2), "Задачи не равны друг другу");
+        Assertions.assertEquals(task1, task2, "Задачи не равны друг другу");
     }
 
     @Test

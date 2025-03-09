@@ -8,9 +8,10 @@ public class Task {
     private int id;
     private Status status;
 
-    public Task(String nameTask, String description) {
+    public Task(String nameTask, String description, Status status) {
         this.name = nameTask;
         this.description = description;
+        this.status = status;
     }
 
     public Task(String name, String description, int id, Status status) {
@@ -56,12 +57,12 @@ public class Task {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
+        return id == task.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id, status);
+        return Objects.hash(id);
     }
 
     @Override

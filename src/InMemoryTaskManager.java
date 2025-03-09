@@ -1,5 +1,4 @@
 import task.Epic;
-import task.Status;
 import task.Subtask;
 import task.Task;
 
@@ -7,7 +6,8 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0;
-    private Map<Integer, Task> tasks = new HashMap<>();
+    private Map<Integer, Task> tasks = new HashMap<>(); // данные поля не финальные, так как переприсваиваются в
+    // методах deletingTasks, deletingEpics, deletingSubtask
     private Map<Integer, Epic> epics = new HashMap<>();
     private Map<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager;
@@ -73,23 +73,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addNewTask(Task task, Status status) {
-        task.setStatus(status); //установка статуса задачи
+    public void addNewTask(Task task) {
         task.setId(increaseId());
         tasks.put(task.getId(), task);
     }
 
     @Override
     public void addNewEpic(Epic epic) {
+        epic.setStatus();
         epic.setId(increaseId());
-        epic.setStatus(); //установка статуса эпика
         epics.put(epic.getId(), epic);
     }
 
     @Override
-    public void addNewSubtask(Subtask subtask, Status status) {
+    public void addNewSubtask(Subtask subtask) {
         subtask.setId(increaseId());
-        subtask.setStatus(status); //установка статуса подзадачи
 
         Epic epic = subtask.getEpic();
         if (epics.containsValue(epic)) { //существуют ли эпик этой подзадачи
@@ -118,10 +116,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void epicUpdate(Epic epic) {
-        if (epics.containsKey(epic.getId()) &&
-                epic.getSubtasks().equals(epics.get(epic.getId()).getSubtasks())) {
+        if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
-
         } else {
             System.out.println("Эпика с id = " + epic.getId() + " в списке задач нет. Обновление невозможно");
         }
@@ -165,7 +161,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteByIdEpic(int id) {
-        for (Subtask subtask : epics.get(id).getSubtasks()) { //блок удаления подзадач удаляемого эпика
+        List<Subtask> subtasksOfTheEpicBeingDeleted = epics.get(id).getSubtasks();
+        for (Subtask subtask : subtasksOfTheEpicBeingDeleted) { //блок удаления подзадач из истории
+            // объекта HistoryManager и удаления подзадач из коллекции subtasks объекта InMemoryTaskManager
             historyManager.remove(subtask.getId());
             subtasks.remove(subtask.getId());
         }
@@ -226,6 +224,9 @@ public class InMemoryTaskManager implements TaskManager {
         this.subtasks = subtasks;
     }
 
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
 
     @Override
     public boolean equals(Object o) {

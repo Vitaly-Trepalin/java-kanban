@@ -4,9 +4,9 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private static final HashMap<Integer, Node<Task>> browsingHistory = new HashMap<>();
-    private static Node<Task> head;
-    private static Node<Task> tail;
+    private final HashMap<Integer, Node<Task>> browsingHistory = new HashMap<>();
+    private Node<Task> head;
+    private Node<Task> tail;
 
     @Override
     public void add(Task task) {
@@ -28,7 +28,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         browsingHistory.remove(id);
     }
 
-    public static void linkLast(Task task) {
+    public void linkLast(Task task) {
         Node<Task> newNode = new Node<>(task);
         if (head == null) {
             head = newNode;
@@ -40,7 +40,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    public static List<Task> getTasks() {
+    public List<Task> getTasks() {
         List<Task> allTasks = new ArrayList<>();
         if (head != null) {
             Node<Task> currentNode = head;
@@ -53,7 +53,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return allTasks;
     }
 
-    public static void removeNode(Node<Task> node) {
+    public void removeNode(Node<Task> node) {
         if (head != null) {
             if (head.equals(node)) {
                 head = head.next;

@@ -1,5 +1,4 @@
 import task.Epic;
-import task.Status;
 import task.Subtask;
 import task.Task;
 
@@ -24,11 +23,11 @@ public interface TaskManager {
 
     Subtask getSubtask(int id);
 
-    void addNewTask(Task task, Status status);
+    void addNewTask(Task task);
 
     void addNewEpic(Epic epic);
 
-    void addNewSubtask(Subtask subtask, Status status);
+    void addNewSubtask(Subtask subtask);
 
     void taskUpdate(Task task);
 
