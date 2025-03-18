@@ -1,4 +1,5 @@
 package task;
+import static task.Type.SUBTASK;
 
 public class Subtask extends Task {
 
@@ -6,11 +7,13 @@ public class Subtask extends Task {
 
     public Subtask(String nameSubtask, String description, Status status, Epic epic) {
         super(nameSubtask, description, status);
+        super.setType(SUBTASK);
         this.epic = epic;
     }
 
     public Subtask(String name, String description, int id, Status status, Epic epic) {
         super(name, description, id, status);
+        super.setType(SUBTASK);
         this.epic = epic;
     }
 
@@ -24,11 +27,11 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
-                "name='" + getNameTask() + '\'' +
-                ", Description='" + getDescription() + '\'' +
-                ", id=" + getId() +
-                ", status=" + getStatus() +
-                '}';
+        return getId() + ","
+                + getType() + ","
+                + getNameTask() + ","
+                + getStatus() + ","
+                + getDescription() + ","
+                + getEpic().getId();
     }
 }
