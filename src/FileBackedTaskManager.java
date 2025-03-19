@@ -1,79 +1,133 @@
-import com.sun.jdi.InvalidLineNumberException;
 import exception.ManagerSaveException;
 import task.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import static task.Status.*;
 import static task.Type.*;
 
+
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
 
-    Path path;
+    File file;
 
-    public FileBackedTaskManager(Path path) {
-        this.path = path;
+    public FileBackedTaskManager(File file) {
+        this.file = file;
     }
 
     public void save() {
         StringBuilder listOfAllTasks = new StringBuilder();
         listOfAllTasks.append("id,type,name,status,description,epic").append("\n");
 
-        for (Task task : super.getTasks().values()) {
+        for (Task task : getTasks().values()) {
             listOfAllTasks.append(task.toString()).append("\n");
         }
 
-        for (Task epic : super.getEpics().values()) {
+        for (Task epic : getEpics().values()) {
             listOfAllTasks.append(epic.toString()).append("\n");
         }
-        for (Task subtask : super.getSubtasks().values()) {
+        for (Task subtask : getSubtasks().values()) {
             listOfAllTasks.append(subtask.toString()).append("\n");
         }
 
         try {
-            Files.writeString(path,
+            Files.writeString(file.toPath(),
                     listOfAllTasks.toString(), StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка ввода-вывода");
         }
     }
 
-    public Task fromString(String value) {
-        String[] objectFields = value.split(",");
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        try {
+            String data = Files.readString(file.toPath());
+            String[] objects = data.split("\n");
+            int id = 0;
 
-        int id = Integer.getInteger(objectFields[0]);
+            for (int i = 1; i < objects.length; i++) { //заполнение данными хэш-таблиц tasks, epics, subtasks класса
+                // FileBackedTaskManager
+                Task task = fromString(objects[i]);
+                if (id < task.getId()) { //присвоение значения полю id класса FileBackedTaskManager
+                    id = task.getId();
+                    setId(task.getId());
+                }
+                if (task instanceof Epic) {
+                    Epic epic = (Epic) task;
+                    HashMap<Integer, Epic> newEpics = getEpics();
+                    newEpics.put(epic.getId(), epic);
+                    setEpics(newEpics);
+                } else if (task instanceof Subtask) {
+                    Subtask subtask = (Subtask) task;
+                    HashMap<Integer, Subtask> newSubtasks = getSubtasks();
+                    newSubtasks.put(subtask.getId(), subtask);
+                    setSubtasks(newSubtasks);
+                } else {
+                    HashMap<Integer, Task> newTasks = getTasks();
+                    newTasks.put(task.getId(), task);
+                    setTasks(newTasks);
+                }
+            }
+
+            HashMap<Integer, Epic> newEpics = getEpics();
+            for (Subtask subtask : getSubtasks().values()) { //добавление в эпики списка входящих в них подзадач
+                Epic epic = newEpics.get(subtask.getEpicId());
+                List<Subtask> subtaskList = epic.getSubtasks();
+                subtaskList.add(subtask);
+                setEpics(newEpics);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fileBackedTaskManager;
+    }
+
+    public static Task fromString(String value) {
+        String[] objectFields = value.split(",", 6); //получение объектов Task из строки
+
+        int id = Integer.parseInt(objectFields[0]);
         Type type = getType(objectFields[1]);
         String name = objectFields[2];
         Status status = getStatus(objectFields[3]);
         String description = objectFields[4];
+        int epicId = 0;
+        if (type.equals(SUBTASK)) {
+            epicId = Integer.parseInt(objectFields[5]);
+        }
 
         if (type.equals(TASK)) {
             return new Task(name, description, id, status);
         } else if (type.equals(EPIC)) {
             return new Epic(name, description, id, status, new ArrayList<>());
+        } else if (type.equals(SUBTASK)) {
+            return new Subtask(name, description, id, status, epicId);
         } else {
-            return new Subtask(name, description, id, status, new);
+            System.out.println("Нет такого типа задачи");
         }
+        return null;
     }
 
-    public Type getType(String enumerationElement) {
-        if (enumerationElement.equals(TASK.toString())) {
+    public static Type getType(String enumerationElement) {
+        if (enumerationElement.equals(TASK.toString())) { //получение типа из строки
             return TASK;
         } else if (enumerationElement.equals(EPIC.toString())) {
             return EPIC;
-        } else if (enumerationElement.equals(SUBTASK.toString()) {
+        } else if (enumerationElement.equals(SUBTASK.toString())) {
             return SUBTASK;
         }
         throw new RuntimeException("Нет такого типа задачи");
     }
 
-    public Status getStatus(String enumerationElement) {
-        if (enumerationElement.equals(NEW.toString())) {
+    public static Status getStatus(String enumerationElement) {
+        if (enumerationElement.equals(NEW.toString())) { //получение статуса из строки
             return NEW;
         } else if (enumerationElement.equals(IN_PROGRESS.toString())) {
             return IN_PROGRESS;

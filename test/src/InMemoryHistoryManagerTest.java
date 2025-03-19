@@ -73,11 +73,11 @@ class InMemoryHistoryManagerTest {
 
         //создание 3 подзадач
         Subtask subtask1 = new Subtask("Первая подзадача",
-                "Описание первой подзадачи", Status.NEW, epic1);
+                "Описание первой подзадачи", Status.NEW, 3);
         Subtask subtask2 = new Subtask("Вторая подзадача",
-                "Описание второй подзадачи", Status.IN_PROGRESS, epic1);
+                "Описание второй подзадачи", Status.IN_PROGRESS, 3);
         Subtask subtask3 = new Subtask("Третья подзадача",
-                "Описание третьей подзадачи", Status.DONE, epic2);
+                "Описание третьей подзадачи", Status.DONE, 4);
         inMemoryTaskManager.addNewSubtask(subtask1);
         inMemoryTaskManager.addNewSubtask(subtask2);
         inMemoryTaskManager.addNewSubtask(subtask3);
@@ -115,11 +115,11 @@ class InMemoryHistoryManagerTest {
 
         //создание 3 подзадач
         Subtask subtask1 = new Subtask("Первая подзадача",
-                "Описание первой подзадачи", Status.NEW, epic1);
+                "Описание первой подзадачи", Status.NEW, 3);
         Subtask subtask2 = new Subtask("Вторая подзадача",
-                "Описание второй подзадачи", Status.IN_PROGRESS, epic1);
+                "Описание второй подзадачи", Status.IN_PROGRESS, 3);
         Subtask subtask3 = new Subtask("Третья подзадача",
-                "Описание третьей подзадачи", Status.DONE, epic2);
+                "Описание третьей подзадачи", Status.DONE, 4);
         inMemoryTaskManager.addNewSubtask(subtask1);
         inMemoryTaskManager.addNewSubtask(subtask2);
         inMemoryTaskManager.addNewSubtask(subtask3);

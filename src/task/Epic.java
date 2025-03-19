@@ -2,6 +2,7 @@ package task;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static task.Type.EPIC;
 
 
@@ -11,6 +12,12 @@ public class Epic extends Task {
     public Epic(String nameEpic, String description, Status status) {
         super(nameEpic, description, status);
         super.setStatus(Status.NEW);
+        super.setType(EPIC);
+        subtasks = new ArrayList<>();
+    }
+
+    public Epic(String nameEpic, String description, int id, Status status) {
+        super(nameEpic, description, id, status);
         super.setType(EPIC);
         subtasks = new ArrayList<>();
     }
@@ -44,7 +51,6 @@ public class Epic extends Task {
         } else {
             setStatus(Status.IN_PROGRESS);
         }
-
     }
 
     public List<Subtask> getSubtasks() {

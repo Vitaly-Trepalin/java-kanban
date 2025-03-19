@@ -13,11 +13,12 @@ class EpicTest {
 
     @BeforeEach
     void preparationForTestingMethods() {
-        epic = new Epic("Второй эпик", "Описание второго эпика", Status.NEW);
-        Subtask subtask1 = new Subtask("Первая подзадача", "3333333333", 1, Status.DONE, epic);
-        Subtask subtask2 = new Subtask("Вторая подзадача", "4444444444", 2, Status.DONE, epic);
-        Subtask subtask3 = new Subtask("Третья подзадача", "5555555555", 3, Status.DONE, epic);
+        Subtask subtask1 = new Subtask("Первая подзадача", "3333333333", 1, Status.DONE, 0);
+        Subtask subtask2 = new Subtask("Вторая подзадача", "4444444444", 2, Status.DONE, 0);
+        Subtask subtask3 = new Subtask("Третья подзадача", "5555555555", 3, Status.DONE, 0);
         listSubtask = List.of(subtask1, subtask2, subtask3);
+        epic = new Epic("Второй эпик",
+                "Описание второго эпика", 0, Status.NEW, new ArrayList<>(listSubtask));
     }
 
     @Test
