@@ -1,6 +1,7 @@
 package task;
 
 import java.util.Objects;
+
 import static task.Type.TASK;
 
 public class Task {

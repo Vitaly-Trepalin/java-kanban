@@ -90,7 +90,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void addNewSubtask(Subtask subtask) {
         subtask.setId(increaseId());
 
-        int epicId = subtask.getEpicId() ;
+        int epicId = subtask.getEpicId();
         if (epics.containsKey(epicId)) { //существуют ли эпик этой подзадачи
             Epic epic = epics.get(epicId);
             List<Subtask> subtaskList = epic.getSubtasks();

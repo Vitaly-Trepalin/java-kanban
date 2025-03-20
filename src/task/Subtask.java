@@ -1,4 +1,5 @@
 package task;
+
 import static task.Type.SUBTASK;
 
 public class Subtask extends Task {

@@ -6,194 +6,146 @@ import task.Task;
 
 import java.util.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class InMemoryTaskManagerTest {
+    private InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
-    public static InMemoryTaskManager creatingAndFillingClassInMemoryTaskManager() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-        Task task1 = new Task("Первая задача", "123", Status.NEW);
-        Task task2 = new Task("Вторая задача", "456", Status.IN_PROGRESS);
+    @BeforeEach //инициализация статических полей taskManager
+    public void creatingAndFillingClassInMemoryTaskManager() {
+        Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW);
+        Task task2 = new Task("Вторая задача", "Описание второй задачи", Status.IN_PROGRESS);
         taskManager.addNewTask(task1);
         taskManager.addNewTask(task2);
-        Epic epic = new Epic("Второй эпик", "Описание второго эпика", Status.NEW);
+        Epic epic = new Epic("Первый эпик", "Описание первого эпика", Status.NEW);
         taskManager.addNewEpic(epic);
-        Subtask subtask1 = new Subtask("Первая подзадача", "3333333333", Status.NEW, 2);
+        Subtask subtask1 = new Subtask("Первая подзадача", "Описание первой подзадачи",
+                Status.NEW, 2);
         Subtask subtask2 = new Subtask("Вторая подзадача",
-                "4444444444", Status.IN_PROGRESS, 2);
-        Subtask subtask3 = new Subtask("Третья подзадача", "5555555555", Status.DONE, 2);
+                "Описание второй подзадачи", Status.IN_PROGRESS, 2);
+        Subtask subtask3 = new Subtask("Третья подзадача", "Описание третьей подзадачи",
+                Status.DONE, 2);
         taskManager.addNewSubtask(subtask1);
         taskManager.addNewSubtask(subtask2);
         taskManager.addNewSubtask(subtask3);
-        return taskManager;
+    }
+
+    @AfterEach //удаление статических полей taskManager
+    public void deleteAllData() {
+        taskManager.deletingTasks();
+        taskManager.deletingEpics();
+        taskManager.deletingSubtask();
+        InMemoryTaskManager.setId(0);
     }
 
     @Test
-    @Order(1)
     void checkDeletingTasks() {
-        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         Map<Integer, Task> expectedHashMap = new HashMap<>();
 
         taskManager.deletingTasks();
         Map<Integer, Task> resultOfTheMethod = taskManager.getTasks();
 
-        Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod), "Хеш-таблица c задачами не отчистилась");
+        Assertions.assertEquals(expectedHashMap, resultOfTheMethod, "Хеш-таблица c задачами не отчистилась");
     }
 
     @Test
-    @Order(2)
     void checkDeletingEpic() {
-        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         HashMap<Integer, Epic> expectedHashMap = new HashMap<>();
 
         taskManager.deletingEpics();
         Map<Integer, Epic> resultOfTheMethod = taskManager.getEpics();
 
-        Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod), "Хеш-таблица с эпиками не отчистилась");
+        Assertions.assertEquals(expectedHashMap, resultOfTheMethod, "Хеш-таблица с эпиками не отчистилась");
     }
 
     @Test
-    @Order(3)
     void checkDeletingSubtask() {
-        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         HashMap<Integer, Subtask> expectedHashMap = new HashMap<>();
 
         taskManager.deletingSubtask();
         Map<Integer, Subtask> resultOfTheMethod = taskManager.getSubtasks();
 
-        Assertions.assertTrue(expectedHashMap.equals(resultOfTheMethod), "Хеш-таблица с подзадачами не " +
+        Assertions.assertEquals(expectedHashMap, resultOfTheMethod, "Хеш-таблица с подзадачами не " +
                 "отчистилась");
     }
 
-
     @Test
-    @Order(4)
     void checkAddNewTaskAndGettingTaskByNumber() {
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        inMemoryTaskManager.deletingTasks();
-        inMemoryTaskManager.deletingSubtask();
-        inMemoryTaskManager.deletingEpics();
 
-        Task expectedTask = new Task("Первая задача", "Описание первой задачи", 0, Status.NEW);
+        Task expectedTask = new Task("Третья задача", "Описание третьей задачи", 6, Status.NEW);
 
-        Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW);
-        inMemoryTaskManager.addNewTask(task1);
+        Task task3 = new Task("Третья задача", "Описание третьей задачи", Status.NEW);
+        taskManager.addNewTask(task3);
+        Task resultOfTheMethod = taskManager.getTask(6);
 
-        HistoryManager historyManager = new InMemoryHistoryManager();
-        historyManager.remove(0);
-
-        Task resultOfTheMethod = inMemoryTaskManager.getTask(0);
-
-        Assertions.assertTrue(expectedTask.equals(resultOfTheMethod), "Задача была некорректно создана или " +
+        Assertions.assertEquals(expectedTask, resultOfTheMethod, "Задача была некорректно создана или " +
                 "некорректно работает получение по Id");
     }
 
     @Test
-    @Order(5)
     void checkAddNewEpicAndGettingEpicByNumber() {
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-
-        Epic expectedEpic = new Epic("Второй эпик", "Описание второго эпика", 0, Status.NEW,
+        Epic expectedEpic = new Epic("Второй эпик", "Описание второго эпика", 6, Status.NEW,
                 new ArrayList<>());
         Epic epic = new Epic("Второй эпик", "Описание второго эпика", Status.NEW);
 
-        inMemoryTaskManager.addNewEpic(epic);
-        Epic resultOfTheMethod = inMemoryTaskManager.getEpic(0);
+        taskManager.addNewEpic(epic);
+        Epic resultOfTheMethod = taskManager.getEpic(6);
 
-        Assertions.assertTrue(expectedEpic.equals(resultOfTheMethod), "Эпик был некорректно создан или " +
+        Assertions.assertEquals(expectedEpic, resultOfTheMethod, "Эпик был некорректно создан или " +
                 "некорректно работает получение по Id");
     }
 
     @Test
-    @Order(6)
     void checkAddNewSubtaskAndGettingSubtaskByNumber() {
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        Subtask expectedSubtask = new Subtask("Четвёртая подзадача", "Описание четвёртой подзадачи",
+                6, Status.NEW, 2);
 
-        Epic epic = new Epic("Второй эпик", "Описание второго эпика", 0, Status.NEW,
-                new ArrayList<>());
-        Subtask expectedSubtask = new Subtask("Первая подзадача", "Описание первой подзадачи", 1,
-                Status.NEW, 0);
+        Subtask subtask = new Subtask("Четвёртая подзадача", "Описание четвёртой подзадачи",
+                6, Status.NEW, 2);
+        taskManager.addNewSubtask(subtask);
+        Subtask resultOfTheMethod = taskManager.getSubtask(6);
 
-        inMemoryTaskManager.addNewEpic(epic);
-        Subtask subtask = new Subtask("Первая подзадача",
-                "Описание первой подзадачи", Status.NEW, 0);
-
-        inMemoryTaskManager.addNewSubtask(subtask);
-        Subtask resultOfTheMethod = inMemoryTaskManager.getSubtask(1);
-
-        Assertions.assertTrue(expectedSubtask.equals(resultOfTheMethod), "Подзадача была некорректно создана " +
+        Assertions.assertEquals(expectedSubtask, resultOfTheMethod, "Подзадача была некорректно создана " +
                 "или некорректно работает получение по Id");
     }
 
     @Test
-    @Order(7)
     void checkTaskUpdate() {
-        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
-        Map<Integer, Task> mapTasks = taskManager.getTasks();
-        Integer keyOfTheItemToUpdate = 0;
-        for (Integer key : mapTasks.keySet()) {
-            keyOfTheItemToUpdate = key;
-            break;
-        }
-        Task expectedTask = mapTasks.get(keyOfTheItemToUpdate);
-        expectedTask.setNameTask("Обновленная задача");
+        Task expectedTask = new Task("Обновлённая первая задача", "Описание первой задачи",
+                0, Status.NEW);
 
         taskManager.taskUpdate(expectedTask);
-        Task resultOfTheMethod = taskManager.getTask(keyOfTheItemToUpdate);
+        Task resultOfTheMethod = taskManager.getTask(0);
 
-        Assertions.assertTrue(expectedTask.equals(resultOfTheMethod), "Задача некорректно обновилась");
+        Assertions.assertEquals(expectedTask, resultOfTheMethod, "Задача некорректно обновилась");
     }
 
     @Test
-    @Order(8)
     void checkEpicUpdate() {
-        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
-        Map<Integer, Epic> mapEpics = taskManager.getEpics();
-        Integer keyOfTheItemToUpdate = 0;
-        for (Integer key : mapEpics.keySet()) {
-            keyOfTheItemToUpdate = key;
-            break;
-        }
-        Epic expectedEpic = mapEpics.get(keyOfTheItemToUpdate);
-        expectedEpic.setNameTask("Обновлённый эпик");
+        Epic expectedEpic = new Epic("Обновлённый второй эпик", "Описание второго эпика", 2,
+                Status.NEW, new ArrayList<>());
 
         taskManager.epicUpdate(expectedEpic);
-        Epic resultOfTheMethod = taskManager.getEpic(keyOfTheItemToUpdate);
+        Epic resultOfTheMethod = taskManager.getEpic(2);
 
-        Assertions.assertTrue(expectedEpic.equals(resultOfTheMethod), "Эпик некорректно обновился");
+        Assertions.assertEquals(expectedEpic, resultOfTheMethod, "Эпик некорректно обновился");
     }
 
     @Test
-    @Order(9)
     void checkSubtaskUpdate() {
-        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
-        Map<Integer, Subtask> mapSubtasks = taskManager.getSubtasks();
-        Integer keyOfTheItemToUpdate = 0;
-        for (Integer key : mapSubtasks.keySet()) {
-            keyOfTheItemToUpdate = key;
-            break;
-        }
-        Subtask expectedSubtask = mapSubtasks.get(keyOfTheItemToUpdate);
-        expectedSubtask.setNameTask("Обновленная подзадача");
+        Subtask expectedSubtask = new Subtask("Обновлённая третья подзадача",
+                "Описание третьей подзадачи", 5, Status.DONE, 2);
 
         taskManager.subtaskUpdate(expectedSubtask);
-        Subtask resultOfTheMethod = taskManager.getSubtask(keyOfTheItemToUpdate);
+        Subtask resultOfTheMethod = taskManager.getSubtask(5);
 
-        Assertions.assertTrue(expectedSubtask.equals(resultOfTheMethod), "Подзадача некорректно обновилась");
+        Assertions.assertEquals(expectedSubtask, resultOfTheMethod, "Подзадача некорректно обновилась");
     }
 
     @Test
-    @Order(10)
     void checkGettingListOfAllTasks() {
         Task expectedTask1 = new Task("Первая задача", "Описание первой задачи", 0, Status.NEW);
         Task expectedTask2 = new Task("Вторая задача",
                 "Описание второй задачи", 1, Status.IN_PROGRESS);
         List<Task> expectedTaskList = new ArrayList<>(Arrays.asList(expectedTask1, expectedTask2));
-
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-        Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW);
-        Task task2 = new Task("Вторая задача", "Описание второй задачи", Status.IN_PROGRESS);
-        taskManager.addNewTask(task1);
-        taskManager.addNewTask(task2);
 
         List<Task> resultOfTheMethod = taskManager.gettingListOfAllTasks();
 
@@ -201,19 +153,10 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    @Order(11)
     void checkGettingListOfAllEpics() {
         Epic expectedEpic1 = new Epic("Первый эпик",
-                "Описание первого эпика", 0, Status.NEW, new ArrayList<>());
-        Epic expectedEpic2 = new Epic("Второй эпик",
-                "Описание второго эпика", 1, Status.IN_PROGRESS, new ArrayList<>());
-        List<Epic> expectedEpicsList = new ArrayList<>(Arrays.asList(expectedEpic1, expectedEpic2));
-
-        TaskManager taskManager = new InMemoryTaskManager();
-        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика", Status.NEW);
-        Epic epic2 = new Epic("Второй эпик", "Описание второго эпика", Status.IN_PROGRESS);
-        taskManager.addNewEpic(epic1);
-        taskManager.addNewEpic(epic2);
+                "Описание первого эпика", 2, Status.NEW, new ArrayList<>());
+        List<Epic> expectedEpicsList = new ArrayList<>(Arrays.asList(expectedEpic1));
 
         List<Epic> resultOfTheMethod = taskManager.gettingListOfAllEpic();
 
@@ -221,25 +164,15 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    @Order(12)
     void checkGettingListOfAllSubtasks() {
         Subtask expectedSubtask1 = new Subtask("Первая подзадача",
-                "Описание первой подзадачи", 1, Status.NEW, 0);
+                "Описание первой подзадачи", 3, Status.NEW, 2);
         Subtask expectedSubtask2 = new Subtask("Вторая подзадача",
-                "Описание второй подзадачи", 2, Status.IN_PROGRESS, 0);
-        List<Subtask> expectedSubtasksList = new ArrayList<>(Arrays.asList(expectedSubtask1, expectedSubtask2));
-        Epic expectedEpic1 = new Epic("Первый эпик",
-                "Описание первого эпика", 0, Status.NEW, expectedSubtasksList);
-
-        TaskManager taskManager = new InMemoryTaskManager();
-        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика", Status.NEW);
-        taskManager.addNewEpic(epic1);
-        Subtask subtask1 = new Subtask("Первая подзадача",
-                "Описание первой подзадачи", Status.NEW, 0);
-        Subtask subtask2 = new Subtask("Вторая подзадача",
-                "Описание второй подзадачи", Status.IN_PROGRESS, 0);
-        taskManager.addNewSubtask(subtask1);
-        taskManager.addNewSubtask(subtask2);
+                "Описание второй подзадачи", 4, Status.IN_PROGRESS, 2);
+        Subtask expectedSubtask3 = new Subtask("Третья подзадача",
+                "Описание третьей подзадачи", 5, Status.DONE, 2);
+        List<Subtask> expectedSubtasksList = new ArrayList<>(Arrays.asList(expectedSubtask1, expectedSubtask2,
+                expectedSubtask3));
 
         List<Subtask> resultOfTheMethod = taskManager.gettingListOfAllSubtask();
 
