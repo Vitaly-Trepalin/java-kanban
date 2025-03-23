@@ -1,24 +1,18 @@
 package task;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 class EpicTest {
-    Epic epic;
-    List<Subtask> listSubtask;
 
-    @BeforeEach
-    void preparationForTestingMethods() {
+    private List<Subtask> preparationForTestingMethods() {
         Subtask subtask1 = new Subtask("Первая подзадача", "3333333333", 1, Status.DONE, 0);
         Subtask subtask2 = new Subtask("Вторая подзадача", "4444444444", 2, Status.DONE, 0);
         Subtask subtask3 = new Subtask("Третья подзадача", "5555555555", 3, Status.DONE, 0);
-        listSubtask = List.of(subtask1, subtask2, subtask3);
-        epic = new Epic("Второй эпик",
-                "Описание второго эпика", 0, Status.NEW, new ArrayList<>(listSubtask));
+        return List.of(subtask1, subtask2, subtask3);
     }
 
     @Test
@@ -31,9 +25,9 @@ class EpicTest {
         Assertions.assertEquals(expectedEpic, actualEpic, "Эпики не равны друг другу");
     }
 
-
     @Test
     void checkSetStatus() {
+        List<Subtask> listSubtask = preparationForTestingMethods();
         Epic epic1 = new Epic("Первый эпик",
                 "Описание первого эпика", 10, Status.NEW, listSubtask);
         Status expectedStatus = Status.DONE;
@@ -46,16 +40,20 @@ class EpicTest {
 
     @Test
     void checkGetSubtasks() {
-        Epic epic1 = new Epic("Первый эпик",
+        List<Subtask> listSubtask = preparationForTestingMethods();
+        Epic epic = new Epic("Первый эпик",
                 "Описание первого эпика", 10, Status.NEW, listSubtask);
 
-        List<Subtask> resultOfTheMethod = epic1.getSubtasks();
+        List<Subtask> resultOfTheMethod = epic.getSubtasks();
 
         Assertions.assertEquals(listSubtask, resultOfTheMethod, "списки подзадач не одинаковы");
     }
 
     @Test
     void checkSetSubtasks() {
+        List<Subtask> listSubtask = preparationForTestingMethods();
+        Epic epic = new Epic("Второй эпик",
+                "Описание второго эпика", 0, Status.NEW, new ArrayList<>());
         epic.setSubtasks(listSubtask);
         List<Subtask> resultOfTheMethod = epic.getSubtasks();
 

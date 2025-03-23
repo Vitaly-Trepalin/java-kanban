@@ -16,7 +16,7 @@ import static task.Type.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
 
-    File file;
+    private final File file;
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -57,31 +57,29 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 Task task = fromString(objects[i]);
                 if (id < task.getId()) { //присвоение значения полю id класса FileBackedTaskManager
                     id = task.getId();
-                    setId(task.getId());
+                    fileBackedTaskManager.setId(task.getId());
                 }
-                if (task instanceof Epic) {
-                    Epic epic = (Epic) task;
-                    HashMap<Integer, Epic> newEpics = getEpics();
+                if (task instanceof Epic epic) {
+                    HashMap<Integer, Epic> newEpics = fileBackedTaskManager.getEpics();
                     newEpics.put(epic.getId(), epic);
-                    setEpics(newEpics);
-                } else if (task instanceof Subtask) {
-                    Subtask subtask = (Subtask) task;
-                    HashMap<Integer, Subtask> newSubtasks = getSubtasks();
+                    fileBackedTaskManager.setEpics(newEpics);
+                } else if (task instanceof Subtask subtask) {
+                    HashMap<Integer, Subtask> newSubtasks = fileBackedTaskManager.getSubtasks();
                     newSubtasks.put(subtask.getId(), subtask);
-                    setSubtasks(newSubtasks);
+                    fileBackedTaskManager.setSubtasks(newSubtasks);
                 } else {
-                    HashMap<Integer, Task> newTasks = getTasks();
+                    HashMap<Integer, Task> newTasks = fileBackedTaskManager.getTasks();
                     newTasks.put(task.getId(), task);
-                    setTasks(newTasks);
+                    fileBackedTaskManager.setTasks(newTasks);
                 }
             }
 
-            HashMap<Integer, Epic> newEpics = getEpics();
-            for (Subtask subtask : getSubtasks().values()) { //добавление в эпики списка входящих в них подзадач
+            HashMap<Integer, Epic> newEpics = fileBackedTaskManager.getEpics();
+            for (Subtask subtask : fileBackedTaskManager.getSubtasks().values()) { //добавление в эпики списка входящих в них подзадач
                 Epic epic = newEpics.get(subtask.getEpicId());
                 List<Subtask> subtaskList = epic.getSubtasks();
                 subtaskList.add(subtask);
-                setEpics(newEpics);
+                fileBackedTaskManager.setEpics(newEpics);
             }
 
         } catch (IOException e) {

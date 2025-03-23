@@ -5,12 +5,11 @@ import task.Task;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private static int id = 0; // все поля статические, так как нужно произвести десериализацию из файла статическим
-    // методом loadFromFile класса FileBackedTaskManager
-    private static HashMap<Integer, Task> tasks = new HashMap<>(); // данные поля не финальные, так как
+    private int id = 0;
+    private HashMap<Integer, Task> tasks = new HashMap<>(); // данные поля не финальные, так как
     // переприсваиваются в методах deletingTasks, deletingEpics, deletingSubtask
-    private static HashMap<Integer, Epic> epics = new HashMap<>();
-    private static HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private HashMap<Integer, Epic> epics = new HashMap<>();
+    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
@@ -194,36 +193,36 @@ public class InMemoryTaskManager implements TaskManager {
         return id;
     }
 
-    public static void setId(int id) {
-        InMemoryTaskManager.id = id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int increaseId() {
         return id++;
     }
 
-    public static HashMap<Integer, Task> getTasks() {
+    public HashMap<Integer, Task> getTasks() {
         return tasks;
     }
 
-    public static HashMap<Integer, Epic> getEpics() {
+    public HashMap<Integer, Epic> getEpics() {
         return epics;
     }
 
-    public static HashMap<Integer, Subtask> getSubtasks() {
+    public HashMap<Integer, Subtask> getSubtasks() {
         return subtasks;
     }
 
-    public static void setTasks(HashMap<Integer, Task> tasks) {
-        InMemoryTaskManager.tasks = tasks;
+    public void setTasks(HashMap<Integer, Task> tasks) {
+        this.tasks = tasks;
     }
 
-    public static void setEpics(HashMap<Integer, Epic> epics) {
-        InMemoryTaskManager.epics = epics;
+    public void setEpics(HashMap<Integer, Epic> epics) {
+        this.epics = epics;
     }
 
-    public static void setSubtasks(HashMap<Integer, Subtask> subtasks) {
-        InMemoryTaskManager.subtasks = subtasks;
+    public void setSubtasks(HashMap<Integer, Subtask> subtasks) {
+        this.subtasks = subtasks;
     }
 
     public HistoryManager getHistoryManager() {

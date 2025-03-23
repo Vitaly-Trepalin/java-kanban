@@ -7,10 +7,9 @@ import task.Task;
 import java.util.*;
 
 class InMemoryTaskManagerTest {
-    private InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
-    @BeforeEach //инициализация статических полей taskManager
-    public void creatingAndFillingClassInMemoryTaskManager() {
+    public InMemoryTaskManager creatingAndFillingClassInMemoryTaskManager() {
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW);
         Task task2 = new Task("Вторая задача", "Описание второй задачи", Status.IN_PROGRESS);
         taskManager.addNewTask(task1);
@@ -26,20 +25,14 @@ class InMemoryTaskManagerTest {
         taskManager.addNewSubtask(subtask1);
         taskManager.addNewSubtask(subtask2);
         taskManager.addNewSubtask(subtask3);
-    }
-
-    @AfterEach //удаление статических полей taskManager
-    public void deleteAllData() {
-        taskManager.deletingTasks();
-        taskManager.deletingEpics();
-        taskManager.deletingSubtask();
-        InMemoryTaskManager.setId(0);
+        return taskManager;
     }
 
     @Test
     void checkDeletingTasks() {
         Map<Integer, Task> expectedHashMap = new HashMap<>();
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         taskManager.deletingTasks();
         Map<Integer, Task> resultOfTheMethod = taskManager.getTasks();
 
@@ -50,6 +43,7 @@ class InMemoryTaskManagerTest {
     void checkDeletingEpic() {
         HashMap<Integer, Epic> expectedHashMap = new HashMap<>();
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         taskManager.deletingEpics();
         Map<Integer, Epic> resultOfTheMethod = taskManager.getEpics();
 
@@ -60,6 +54,7 @@ class InMemoryTaskManagerTest {
     void checkDeletingSubtask() {
         HashMap<Integer, Subtask> expectedHashMap = new HashMap<>();
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         taskManager.deletingSubtask();
         Map<Integer, Subtask> resultOfTheMethod = taskManager.getSubtasks();
 
@@ -72,6 +67,7 @@ class InMemoryTaskManagerTest {
 
         Task expectedTask = new Task("Третья задача", "Описание третьей задачи", 6, Status.NEW);
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         Task task3 = new Task("Третья задача", "Описание третьей задачи", Status.NEW);
         taskManager.addNewTask(task3);
         Task resultOfTheMethod = taskManager.getTask(6);
@@ -86,6 +82,7 @@ class InMemoryTaskManagerTest {
                 new ArrayList<>());
         Epic epic = new Epic("Второй эпик", "Описание второго эпика", Status.NEW);
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         taskManager.addNewEpic(epic);
         Epic resultOfTheMethod = taskManager.getEpic(6);
 
@@ -98,6 +95,7 @@ class InMemoryTaskManagerTest {
         Subtask expectedSubtask = new Subtask("Четвёртая подзадача", "Описание четвёртой подзадачи",
                 6, Status.NEW, 2);
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         Subtask subtask = new Subtask("Четвёртая подзадача", "Описание четвёртой подзадачи",
                 6, Status.NEW, 2);
         taskManager.addNewSubtask(subtask);
@@ -112,6 +110,7 @@ class InMemoryTaskManagerTest {
         Task expectedTask = new Task("Обновлённая первая задача", "Описание первой задачи",
                 0, Status.NEW);
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         taskManager.taskUpdate(expectedTask);
         Task resultOfTheMethod = taskManager.getTask(0);
 
@@ -123,6 +122,7 @@ class InMemoryTaskManagerTest {
         Epic expectedEpic = new Epic("Обновлённый второй эпик", "Описание второго эпика", 2,
                 Status.NEW, new ArrayList<>());
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         taskManager.epicUpdate(expectedEpic);
         Epic resultOfTheMethod = taskManager.getEpic(2);
 
@@ -134,6 +134,7 @@ class InMemoryTaskManagerTest {
         Subtask expectedSubtask = new Subtask("Обновлённая третья подзадача",
                 "Описание третьей подзадачи", 5, Status.DONE, 2);
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         taskManager.subtaskUpdate(expectedSubtask);
         Subtask resultOfTheMethod = taskManager.getSubtask(5);
 
@@ -147,6 +148,7 @@ class InMemoryTaskManagerTest {
                 "Описание второй задачи", 1, Status.IN_PROGRESS);
         List<Task> expectedTaskList = new ArrayList<>(Arrays.asList(expectedTask1, expectedTask2));
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         List<Task> resultOfTheMethod = taskManager.gettingListOfAllTasks();
 
         Assertions.assertEquals(expectedTaskList, resultOfTheMethod, "Ошибка при получении списка задач");
@@ -158,6 +160,7 @@ class InMemoryTaskManagerTest {
                 "Описание первого эпика", 2, Status.NEW, new ArrayList<>());
         List<Epic> expectedEpicsList = new ArrayList<>(Arrays.asList(expectedEpic1));
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         List<Epic> resultOfTheMethod = taskManager.gettingListOfAllEpic();
 
         Assertions.assertEquals(expectedEpicsList, resultOfTheMethod, "Ошибка при получении списка эпиков");
@@ -174,6 +177,7 @@ class InMemoryTaskManagerTest {
         List<Subtask> expectedSubtasksList = new ArrayList<>(Arrays.asList(expectedSubtask1, expectedSubtask2,
                 expectedSubtask3));
 
+        InMemoryTaskManager taskManager = creatingAndFillingClassInMemoryTaskManager();
         List<Subtask> resultOfTheMethod = taskManager.gettingListOfAllSubtask();
 
         Assertions.assertEquals(expectedSubtasksList, resultOfTheMethod, "Ошибка при получении списка " +

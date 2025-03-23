@@ -9,15 +9,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class FileBackedTaskManagerTest {
-
-    private File file = File.createTempFile("test", ".csv");
-    private FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
+    private final File file = File.createTempFile("test", ".csv");
 
     public FileBackedTaskManagerTest() throws IOException {
     }
 
-    @BeforeEach //инициализация статических полей taskManager
-    public void creatingAndFillingClassFileBackedTaskManager() {
+    public FileBackedTaskManager creatingAndFillingClassFileBackedTaskManager() throws IOException {
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
         Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW);
         Task task2 = new Task("Вторая задача", "Описание второй задачи", Status.IN_PROGRESS);
         taskManager.addNewTask(task1);
@@ -33,20 +31,14 @@ public class FileBackedTaskManagerTest {
         taskManager.addNewSubtask(subtask1);
         taskManager.addNewSubtask(subtask2);
         taskManager.addNewSubtask(subtask3);
-    }
-
-    @AfterEach //удаление статических полей taskManager
-    public void deleteAllData() {
-        taskManager.deletingTasks();
-        taskManager.deletingEpics();
-        taskManager.deletingSubtask();
-        InMemoryTaskManager.setId(0);
+        return taskManager;
     }
 
     @Test
     void checkSavingTasks() throws IOException {
         String expectedTask = "0,TASK,Первая задача,NEW,Описание первой задачи,";
 
+        FileBackedTaskManager taskManager = creatingAndFillingClassFileBackedTaskManager();
         taskManager.save();
         String resultOfMethod = Files.readString(file.toPath()).split("\n")[1];
 
@@ -65,6 +57,7 @@ public class FileBackedTaskManagerTest {
                         "4,SUBTASK,Вторая подзадача,IN_PROGRESS,Описание второй подзадачи,2, " +
                         "5,SUBTASK,Третья подзадача,DONE,Описание третьей подзадачи,2]";
 
+        FileBackedTaskManager taskManager = creatingAndFillingClassFileBackedTaskManager();
         taskManager.save();
         FileBackedTaskManager.loadFromFile(file);
         String resultOfTheMethod = "" + taskManager.gettingListOfAllTasks() +
@@ -77,9 +70,9 @@ public class FileBackedTaskManagerTest {
 
     @Test
     void checkSavingAndLoadingAnEmptyFile() throws IOException {
-        deleteAllData();
         String expectedString = "id,type,name,status,description,epic\n";
 
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
         taskManager.save();
 
         String resultOfMethod = Files.readString(file.toPath());
