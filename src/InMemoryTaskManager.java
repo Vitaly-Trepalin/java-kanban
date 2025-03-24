@@ -6,10 +6,10 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0;
-    private Map<Integer, Task> tasks = new HashMap<>(); // данные поля не финальные, так как переприсваиваются в
-    // методах deletingTasks, deletingEpics, deletingSubtask
-    private Map<Integer, Epic> epics = new HashMap<>();
-    private Map<Integer, Subtask> subtasks = new HashMap<>();
+    private HashMap<Integer, Task> tasks = new HashMap<>(); // данные поля не финальные, так как
+    // переприсваиваются в методах deletingTasks, deletingEpics, deletingSubtask
+    private HashMap<Integer, Epic> epics = new HashMap<>();
+    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
@@ -89,8 +89,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void addNewSubtask(Subtask subtask) {
         subtask.setId(increaseId());
 
-        Epic epic = subtask.getEpic();
-        if (epics.containsValue(epic)) { //существуют ли эпик этой подзадачи
+        int epicId = subtask.getEpicId();
+        if (epics.containsKey(epicId)) { //существуют ли эпик этой подзадачи
+            Epic epic = epics.get(epicId);
             List<Subtask> subtaskList = epic.getSubtasks();
             subtaskList.add(subtask); //добавление в эпик данных о новой подзадаче
             epic.setSubtasks(subtaskList);
@@ -126,18 +127,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void subtaskUpdate(Subtask subtask) {
-        Epic epic = subtask.getEpic(); //блок кода актуализации статуса эпика, в который входит подзадача
+        Epic epic = epics.get(subtask.getEpicId()); //блок кода актуализации статуса эпика, в который входит подзадача
         List<Subtask> listOfSubtasksOfTheEpic = epic.getSubtasks();
 
         //проверка наличия в списке подзадач эпика, подзадачи c нужным id
         boolean isPresenceOfSubtaskWithThisNumber = false;
         int subtaskNumberInTheSubtaskList = 0;
-        for (Subtask subtask1 : listOfSubtasksOfTheEpic) {
-            if (subtask1.getId() == subtask.getId()) {
+        for (int i = 0; i < listOfSubtasksOfTheEpic.size(); i++) {
+            if (listOfSubtasksOfTheEpic.get(i).equals(subtask)) {
                 isPresenceOfSubtaskWithThisNumber = true;
+                subtaskNumberInTheSubtaskList = i;
                 break;
             }
-            subtaskNumberInTheSubtaskList++;
         }
 
         if (isPresenceOfSubtaskWithThisNumber) { //внесение изменений во все, связанные с обновлением подзадачи, поля
@@ -173,7 +174,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteByIdSubtask(int id) {
-        Epic epic = subtasks.get(id).getEpic(); //получение объекта эпика из подзадачи
+        Epic epic = epics.get(subtasks.get(id).getEpicId()); //получение объекта эпика из подзадачи
         List<Subtask> subtaskList = epic.getSubtasks();
         subtaskList.remove(subtasks.get(id));
         epic.setStatus();
@@ -200,15 +201,15 @@ public class InMemoryTaskManager implements TaskManager {
         return id++;
     }
 
-    public Map<Integer, Task> getTasks() {
+    public HashMap<Integer, Task> getTasks() {
         return tasks;
     }
 
-    public Map<Integer, Epic> getEpics() {
+    public HashMap<Integer, Epic> getEpics() {
         return epics;
     }
 
-    public Map<Integer, Subtask> getSubtasks() {
+    public HashMap<Integer, Subtask> getSubtasks() {
         return subtasks;
     }
 
@@ -240,4 +241,6 @@ public class InMemoryTaskManager implements TaskManager {
     public int hashCode() {
         return Objects.hash(id, tasks, epics, subtasks);
     }
+
+
 }

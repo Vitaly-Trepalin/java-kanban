@@ -7,23 +7,21 @@ class SubtaskTest {
 
     @Test
     void checkingEqualityOfClassInstancesSubtask() {
-        Epic epic = new Epic("Второй эпик", "Описание второго эпика", Status.NEW);
         Subtask subtask1 = new Subtask("Первая подзадача", "Описание первой подзадачи", 10,
-                Status.DONE, epic);
+                Status.DONE, 0);
         Subtask subtask2 = new Subtask("Первая подзадача", "Описание первой подзадачи", 10,
-                Status.DONE, epic);
+                Status.DONE, 0);
 
         Assertions.assertEquals(subtask1, subtask2, "Подзадачи не равны друг другу");
     }
 
     @Test
     void checkGetEpic() {
-        Epic expectedEpic = new Epic("Первый эпик", "Описание первого эпика", Status.NEW);
         Subtask subtask = new Subtask("Первая подзадача",
-                "Описание первой подзадачи", Status.NEW, expectedEpic);
+                "Описание первой подзадачи", Status.NEW, 0);
 
-        Epic resultOfTheMethod = subtask.getEpic();
+        int resultOfTheMethod = subtask.getEpicId();
 
-        Assertions.assertEquals(expectedEpic, resultOfTheMethod, "получен неверный эпик");
+        Assertions.assertEquals(0, resultOfTheMethod, "получен неверный эпик");
     }
 }

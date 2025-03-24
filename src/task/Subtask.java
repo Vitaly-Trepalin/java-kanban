@@ -1,34 +1,38 @@
 package task;
 
+import static task.Type.SUBTASK;
+
 public class Subtask extends Task {
 
-    private Epic epic; //информация об эпике в рамках которого выполняется эта подзадача
+    private int epicId; //информация об эпике в рамках которого выполняется эта подзадача
 
-    public Subtask(String nameSubtask, String description, Status status, Epic epic) {
+    public Subtask(String nameSubtask, String description, Status status, int epicId) {
         super(nameSubtask, description, status);
-        this.epic = epic;
+        super.setType(SUBTASK);
+        this.epicId = epicId;
     }
 
-    public Subtask(String name, String description, int id, Status status, Epic epic) {
+    public Subtask(String name, String description, int id, Status status, int epicId) {
         super(name, description, id, status);
-        this.epic = epic;
+        super.setType(SUBTASK);
+        this.epicId = epicId;
     }
 
-    public Epic getEpic() {
-        return epic;
+    public int getEpicId() {
+        return epicId;
     }
 
-    public void setEpic(Epic epic) {
-        this.epic = epic;
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
     }
 
     @Override
     public String toString() {
-        return "Subtask{" +
-                "name='" + getNameTask() + '\'' +
-                ", Description='" + getDescription() + '\'' +
-                ", id=" + getId() +
-                ", status=" + getStatus() +
-                '}';
+        return getId() + ","
+                + getType() + ","
+                + getNameTask() + ","
+                + getStatus() + ","
+                + getDescription() + ","
+                + epicId;
     }
 }

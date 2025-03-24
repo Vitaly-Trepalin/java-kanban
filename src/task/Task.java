@@ -2,11 +2,14 @@ package task;
 
 import java.util.Objects;
 
+import static task.Type.TASK;
+
 public class Task {
     private String name;
     private String description;
     private int id;
     private Status status;
+    private Type type = TASK;
 
     public Task(String nameTask, String description, Status status) {
         this.name = nameTask;
@@ -53,6 +56,14 @@ public class Task {
         this.status = status;
     }
 
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -67,11 +78,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
-                ", Description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                '}';
+        return id + "," + type + "," + name + "," + status + "," + description + ",";
     }
 }
