@@ -1,5 +1,7 @@
 package task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static task.Type.TASK;
@@ -10,18 +12,25 @@ public class Task {
     private int id;
     private Status status;
     private Type type = TASK;
+    private Duration duration;
+    private LocalDateTime startTime;
 
-    public Task(String nameTask, String description, Status status) {
+
+    public Task(String nameTask, String description, Status status, long duration, LocalDateTime startTime) {
         this.name = nameTask;
         this.description = description;
         this.status = status;
+        setDuration(duration);
+        this.startTime = startTime;
     }
 
-    public Task(String name, String description, int id, Status status) {
+    public Task(String name, String description, int id, Status status, long duration, LocalDateTime startTime) {
         this.name = name;
         this.description = description;
         this.id = id;
         this.status = status;
+        setDuration(duration);
+        this.startTime = startTime;
     }
 
     public String getNameTask() {
@@ -64,6 +73,29 @@ public class Task {
         this.type = type;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = Duration.ofMinutes(duration);
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null) {
+            return null;
+        }
+        return startTime.plus(duration);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -78,6 +110,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return id + "," + type + "," + name + "," + status + "," + description + ",";
+        return id + "," + type + "," + name + "," + status + "," + description + "," + duration.toMinutes() + ","
+                + startTime;
     }
 }

@@ -57,7 +57,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (head != null) {
             if (head.equals(node)) {
                 head = head.next;
-//                head.prev = null;
                 return;
             }
             Node<Task> currentNode = head;
