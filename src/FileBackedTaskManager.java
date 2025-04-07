@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     public void save() {
         StringBuilder listOfAllTasks = new StringBuilder();
-        listOfAllTasks.append("id,type,name,status,description,epic").append("\n");
+        listOfAllTasks.append("id,type,name,status,description,duration,startTime,epic").append("\n");
 
         for (Task task : getTasks().values()) {
             listOfAllTasks.append(task.toString()).append("\n");
@@ -75,13 +76,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             }
 
             HashMap<Integer, Epic> newEpics = fileBackedTaskManager.getEpics();
-            for (Subtask subtask : fileBackedTaskManager.getSubtasks().values()) { //добавление в эпики списка входящих в них подзадач
+            for (Subtask subtask : fileBackedTaskManager.getSubtasks().values()) { //добавление в эпики списка входящих
+                // в них подзадач и обновление полей status, duration, startTime, endTime
                 Epic epic = newEpics.get(subtask.getEpicId());
                 List<Subtask> subtaskList = epic.getSubtasks();
                 subtaskList.add(subtask);
+                fileBackedTaskManager.updateStatusDurationStartTimeEndTimeOfTheEpic(epic);
                 fileBackedTaskManager.setEpics(newEpics);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -89,24 +91,29 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     public static Task fromString(String value) {
-        String[] objectFields = value.split(",", 6); //получение объектов Task из строки
+        String[] objectFields = value.split(",", 8); //получение объектов Task из строки
 
         int id = Integer.parseInt(objectFields[0]);
         Type type = getType(objectFields[1]);
         String name = objectFields[2];
         Status status = getStatus(objectFields[3]);
         String description = objectFields[4];
+        long duration = Long.parseLong(objectFields[5]);
+        LocalDateTime localDateTime = null;
+        if (!objectFields[6].equals("null")) {
+            localDateTime = LocalDateTime.parse(objectFields[6]);
+        }
         int epicId = 0;
         if (type.equals(SUBTASK)) {
-            epicId = Integer.parseInt(objectFields[5]);
+            epicId = Integer.parseInt(objectFields[7]);
         }
 
         if (type.equals(TASK)) {
-            return new Task(name, description, id, status);
+            return new Task(name, description, id, status, duration, localDateTime);
         } else if (type.equals(EPIC)) {
-            return new Epic(name, description, id, status, new ArrayList<>());
+            return new Epic(name, description, id, new ArrayList<>());
         } else if (type.equals(SUBTASK)) {
-            return new Subtask(name, description, id, status, epicId);
+            return new Subtask(name, description, id, status, duration, localDateTime, epicId);
         } else {
             System.out.println("Нет такого типа задачи");
         }

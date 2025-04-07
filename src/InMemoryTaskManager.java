@@ -2,6 +2,7 @@ import task.Epic;
 import task.Subtask;
 import task.Task;
 
+import java.time.ZoneOffset;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -11,6 +12,37 @@ public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Epic> epics = new HashMap<>();
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager;
+
+
+    public Set<Task> getPrioritizedTasks() {
+        TreeSet<Task> sortedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+        sortedTasks.addAll(tasks.values().stream()
+                .filter(task -> task.getStartTime() != null)
+                .toList());
+        sortedTasks.addAll(subtasks.values().stream()
+                .filter(subtask -> subtask.getStartTime() != null)
+                .toList());
+        return sortedTasks;
+    }
+
+    public boolean hasIntersections(Task task) {
+        if (task.getStartTime() == null) {
+            return false;
+        }
+        return getPrioritizedTasks().stream() //проверка пересечения задач и подзадач по времени методом
+                // наложения отрезков
+                .anyMatch(task1 -> {
+                    long startTime1 = task.getStartTime().toEpochSecond(ZoneOffset.ofTotalSeconds(0));
+                    long startTime2 = task1.getStartTime().toEpochSecond(ZoneOffset.ofTotalSeconds(0));
+
+                    long endTime1 = task.getStartTime()
+                            .plus(task.getDuration()).toEpochSecond(ZoneOffset.ofTotalSeconds(0));
+                    long endTime2 = task1.getStartTime()
+                            .plus(task.getDuration()).toEpochSecond(ZoneOffset.ofTotalSeconds(0));
+
+                    return Math.max(startTime1, startTime2) <= Math.min(endTime1, endTime2);
+                });
+    }
 
     public InMemoryTaskManager() {
         this.historyManager = Managers.getDefaultHistory();
@@ -49,7 +81,8 @@ public class InMemoryTaskManager implements TaskManager {
             // и удаление всех подзадач в эпике
             Epic epic = epics.get(key);
             epic.setSubtasks(new ArrayList<>());
-            epic.setStatus();
+            updateStatusDurationStartTimeEndTimeOfTheEpic(epic);
+            epic.setStatus(epic.setStatusForEpic());
             epics.put(key, epic);
         }
     }
@@ -74,19 +107,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewTask(Task task) {
+        if (hasIntersections(task)) {
+            System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
+                    task + " не добавлена");
+            return;
+        }
         task.setId(increaseId());
         tasks.put(task.getId(), task);
     }
 
     @Override
     public void addNewEpic(Epic epic) {
-        epic.setStatus();
+        epic.setStatus(epic.setStatusForEpic());
         epic.setId(increaseId());
         epics.put(epic.getId(), epic);
     }
 
     @Override
     public void addNewSubtask(Subtask subtask) {
+        if (hasIntersections(subtask)) {
+            System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
+                    subtask + " не добавлена");
+            return;
+        }
         subtask.setId(increaseId());
 
         int epicId = subtask.getEpicId();
@@ -95,8 +138,7 @@ public class InMemoryTaskManager implements TaskManager {
             List<Subtask> subtaskList = epic.getSubtasks();
             subtaskList.add(subtask); //добавление в эпик данных о новой подзадаче
             epic.setSubtasks(subtaskList);
-
-            epic.setStatus(); //актуализация статуса эпика
+            updateStatusDurationStartTimeEndTimeOfTheEpic(epic);
         } else {
             System.out.println("Эпика с такой подзадачей нет");
             return;
@@ -107,6 +149,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void taskUpdate(Task task) {
+        if (hasIntersections(task)) {
+            System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
+                    task + " не обновлена");
+            return;
+        }
         if (tasks.containsKey(task.getId())) {
             tasks.put(task.getId(), task);
         } else {
@@ -127,6 +174,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void subtaskUpdate(Subtask subtask) {
+        if (hasIntersections(subtask)) {
+            System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
+                    subtask + " не обновлена");
+            return;
+        }
         Epic epic = epics.get(subtask.getEpicId()); //блок кода актуализации статуса эпика, в который входит подзадача
         List<Subtask> listOfSubtasksOfTheEpic = epic.getSubtasks();
 
@@ -145,7 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
             listOfSubtasksOfTheEpic.remove(subtaskNumberInTheSubtaskList);
             listOfSubtasksOfTheEpic.add(subtask);
             epic.setSubtasks(listOfSubtasksOfTheEpic);
-            epic.setStatus();
+            updateStatusDurationStartTimeEndTimeOfTheEpic(epic);
             epics.put(epic.getId(), epic);
             subtasks.put(subtask.getId(), subtask);
         } else {
@@ -177,10 +229,8 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(subtasks.get(id).getEpicId()); //получение объекта эпика из подзадачи
         List<Subtask> subtaskList = epic.getSubtasks();
         subtaskList.remove(subtasks.get(id));
-        epic.setStatus();
-
+        updateStatusDurationStartTimeEndTimeOfTheEpic(epic);
         subtasks.remove(id);
-
         epics.put(epic.getId(), epic);
         historyManager.remove(id);
     }
@@ -227,6 +277,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     public HistoryManager getHistoryManager() {
         return historyManager;
+    }
+
+    public void updateStatusDurationStartTimeEndTimeOfTheEpic(Epic epic) {
+        epic.setStatus(epic.setStatusForEpic());  //актуализация статуса эпика
+        epic.setDuration(epic.setDurationForEpics()); //актуализация продолжительности всех подзадач эпика
+        epic.setStartTime(epic.setStartTimeForEpics()); //актуализация старта самой ранней подзадачи эпика
+        epic.setEndTime(epic.setEndTimeForEpics()); //актуализация окончания самой поздней подзадачи эпика
     }
 
     @Override

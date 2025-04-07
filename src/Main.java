@@ -5,6 +5,7 @@ import task.Task;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class Main {
     private static FileBackedTaskManager fileBackedTaskManager;
@@ -16,31 +17,42 @@ public class Main {
         System.out.println("Создание 3 задач, 2 эпиков и 3 подзадач\n");
         fileBackedTaskManager = new FileBackedTaskManager(file);
 
-        Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW);
-        Task task2 = new Task("Вторая задача", "Описание второй задачи", Status.IN_PROGRESS);
-        Task task3 = new Task("Третья задача", "Описание третьей задачи", Status.DONE);
+        Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW, 30,
+                LocalDateTime.of(2025, 4, 4, 6, 0));
+        Task task2 = new Task("Вторая задача", "Описание второй задачи", Status.IN_PROGRESS,
+                40, LocalDateTime.of(2025, 4, 4, 7, 0));
+        Task task3 = new Task("Третья задача", "Описание третьей задачи", Status.DONE, 45,
+                LocalDateTime.of(2025, 4, 4, 11, 0));
         fileBackedTaskManager.addNewTask(task1);
         fileBackedTaskManager.addNewTask(task2);
         fileBackedTaskManager.addNewTask(task3);
 
         //создание 2 эпиков
-        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика", Status.NEW);
-        Epic epic2 = new Epic("Второй эпик", "Описание второго эпика", Status.NEW);
+        Epic epic1 = new Epic("Первый эпик", "Описание первого эпика");
+        Epic epic2 = new Epic("Второй эпик", "Описание второго эпика");
         fileBackedTaskManager.addNewEpic(epic1);
         fileBackedTaskManager.addNewEpic(epic2);
 
         //создание 3 подзадач
         Subtask subtask1 = new Subtask("Первая подзадача",
-                "Описание первой подзадачи", Status.IN_PROGRESS, 3);
+                "Описание первой подзадачи", Status.IN_PROGRESS, 45,
+                null, 3);
         Subtask subtask2 = new Subtask("Вторая подзадача",
-                "Описание второй подзадачи", Status.NEW, 3);
+                "Описание второй подзадачи", Status.NEW, 30,
+                LocalDateTime.of(2025, 4, 4, 9, 0), 3);
         Subtask subtask3 = new Subtask("Третья подзадача",
-                "Описание третьей подзадачи", Status.NEW, 4);
+                "Описание третьей подзадачи", Status.NEW, 45,
+                LocalDateTime.of(2025, 4, 4, 10, 0), 4);
         fileBackedTaskManager.addNewSubtask(subtask1);
         fileBackedTaskManager.addNewSubtask(subtask2);
         fileBackedTaskManager.addNewSubtask(subtask3);
 
         printAllTasksSubtasksEpics();
+
+        System.out.println("\n-----------------------------------------------------------------------");
+
+        System.out.println("Проверка вывода всех задач и подзадач в отсортированном порядке\n");
+        System.out.println(fileBackedTaskManager.getPrioritizedTasks());
 
         System.out.println("\n-----------------------------------------------------------------------");
 
@@ -51,7 +63,8 @@ public class Main {
 
         System.out.println("Проверка обновления задачи. Обновление третьей задачи с id=2\n");
         Task task = new Task("Обновленная третья задача",
-                "Новое описание третьей задачи", 2, Status.IN_PROGRESS);
+                "Новое описание третьей задачи", 2, Status.IN_PROGRESS, 45,
+                LocalDateTime.of(2025, 4, 4, 11, 0));
         fileBackedTaskManager.taskUpdate(task); //блок проверки обновления задачи с id=2
         printAllTasksSubtasksEpics();
 
@@ -66,7 +79,8 @@ public class Main {
         System.out.println("Проверка обновления второй подзадачи. Обновление подзадачи с id=6\n");
         // блок проверки обновления подзадачи с id=6
         Subtask subtask4 = new Subtask("Обновлённая вторая подзадача",
-                "Описание обновлённой второй подзадачи", Status.NEW, 3);
+                "Описание обновлённой второй подзадачи", Status.NEW, 30,
+                LocalDateTime.of(2025, 4, 4, 9, 0), 3);
         subtask4.setId(6);
         subtask4.setStatus(Status.IN_PROGRESS);
 
@@ -90,7 +104,8 @@ public class Main {
 
         System.out.println("Проверка добавления подзадачи второго эпика\n");
         Subtask subtask5 = new Subtask("Пятая подзадача",
-                "Описание пятой подзадачи", Status.IN_PROGRESS, 4);
+                "Описание пятой подзадачи", Status.IN_PROGRESS, 10,
+                LocalDateTime.of(2025, 4, 4, 13, 0), 4);
         fileBackedTaskManager.addNewSubtask(subtask5);
         printAllTasksSubtasksEpics();
 
