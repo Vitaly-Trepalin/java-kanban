@@ -35,7 +35,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
                 LocalDateTime.of(2025, 4, 4, 8, 0), 2);
 
         InMemoryTaskManager inMemoryTaskManager = creatingAndFillingClassInMemoryTaskManager();
-        boolean resultOfMethod = inMemoryTaskManager.areThereAnyIntersections(subtask);
+        boolean resultOfMethod = inMemoryTaskManager.hasIntersections(subtask);
 
         Assertions.assertTrue(resultOfMethod, "метод areThereAnyIntersections не находит совпадения во " +
                 "времени выполнения задач");

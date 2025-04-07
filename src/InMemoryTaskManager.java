@@ -25,7 +25,7 @@ public class InMemoryTaskManager implements TaskManager {
         return sortedTasks;
     }
 
-    public boolean areThereAnyIntersections(Task task) {
+    public boolean hasIntersections(Task task) {
         if (task.getStartTime() == null) {
             return false;
         }
@@ -107,7 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewTask(Task task) {
-        if (areThereAnyIntersections(task)) {
+        if (hasIntersections(task)) {
             System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
                     task + " не добавлена");
             return;
@@ -125,7 +125,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewSubtask(Subtask subtask) {
-        if (areThereAnyIntersections(subtask)) {
+        if (hasIntersections(subtask)) {
             System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
                     subtask + " не добавлена");
             return;
@@ -149,7 +149,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void taskUpdate(Task task) {
-        if (areThereAnyIntersections(task)) {
+        if (hasIntersections(task)) {
             System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
                     task + " не обновлена");
             return;
@@ -174,7 +174,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void subtaskUpdate(Subtask subtask) {
-        if (areThereAnyIntersections(subtask)) {
+        if (hasIntersections(subtask)) {
             System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
                     subtask + " не обновлена");
             return;
