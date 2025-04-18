@@ -1,4 +1,4 @@
-package task;
+package project.task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static task.Type.EPIC;
+import static project.task.Type.EPIC;
 
 public class Epic extends Task {
     private List<Subtask> subtasks;
@@ -105,8 +105,7 @@ public class Epic extends Task {
                 .map(Task::getEndTime)
                 .filter(Objects::nonNull)
                 .max(LocalDateTime::compareTo);
-        LocalDateTime endTime = startOfTheLastTask.orElseGet(() -> null);
-        return endTime != null ? endTime.plus(getDuration()) : null;
+        return startOfTheLastTask.orElseGet(() -> null);
     }
 
     public void setEndTime(LocalDateTime endTime) {

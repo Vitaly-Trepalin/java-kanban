@@ -1,10 +1,10 @@
-package task;
+package project.task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static task.Type.TASK;
+import static project.task.Type.TASK;
 
 public class Task {
     private String name;
@@ -15,6 +15,7 @@ public class Task {
     private Duration duration;
     private LocalDateTime startTime;
 
+    public Task() {}
 
     public Task(String nameTask, String description, Status status, long duration, LocalDateTime startTime) {
         this.name = nameTask;

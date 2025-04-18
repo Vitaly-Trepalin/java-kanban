@@ -1,5 +1,7 @@
-import exception.ManagerSaveException;
-import task.*;
+package project;
+
+import project.exception.ManagerSaveException;
+import project.task.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static task.Status.*;
-import static task.Type.*;
+import static project.task.Status.*;
+import static project.task.Type.*;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
@@ -54,9 +56,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             int id = 0;
 
             for (int i = 1; i < objects.length; i++) { //заполнение данными хэш-таблиц tasks, epics, subtasks класса
-                // FileBackedTaskManager
+                // project.FileBackedTaskManager
                 Task task = fromString(objects[i]);
-                if (id < task.getId()) { //присвоение значения полю id класса FileBackedTaskManager
+                if (id < task.getId()) { //присвоение значения полю id класса project.FileBackedTaskManager
                     id = task.getId();
                     fileBackedTaskManager.setId(task.getId());
                 }

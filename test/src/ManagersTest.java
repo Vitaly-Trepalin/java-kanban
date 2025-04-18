@@ -1,5 +1,8 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import project.HistoryManager;
+import project.Managers;
+import project.TaskManager;
 
 class ManagersTest {
 

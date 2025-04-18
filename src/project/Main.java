@@ -1,7 +1,9 @@
-import task.Epic;
-import task.Status;
-import task.Subtask;
-import task.Task;
+package project;
+
+import project.task.Epic;
+import project.task.Status;
+import project.task.Subtask;
+import project.task.Task;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +38,7 @@ public class Main {
         //создание 3 подзадач
         Subtask subtask1 = new Subtask("Первая подзадача",
                 "Описание первой подзадачи", Status.IN_PROGRESS, 45,
-                null, 3);
+                LocalDateTime.of(2025, 4, 4, 8, 0), 3);
         Subtask subtask2 = new Subtask("Вторая подзадача",
                 "Описание второй подзадачи", Status.NEW, 30,
                 LocalDateTime.of(2025, 4, 4, 9, 0), 3);
@@ -65,7 +67,9 @@ public class Main {
         Task task = new Task("Обновленная третья задача",
                 "Новое описание третьей задачи", 2, Status.IN_PROGRESS, 45,
                 LocalDateTime.of(2025, 4, 4, 11, 0));
+
         fileBackedTaskManager.taskUpdate(task); //блок проверки обновления задачи с id=2
+
         printAllTasksSubtasksEpics();
 
         System.out.println("\n-----------------------------------------------------------------------");
@@ -121,19 +125,19 @@ public class Main {
         System.out.println("\n-----------------------------------------------------------------------");
 
         System.out.println("Проверка записи (в том числе порядка) истории просмотра задач и их получение из " +
-                "InMemoryHistoryManager\n");
+                "project.InMemoryHistoryManager\n");
         System.out.println(fileBackedTaskManager.getHistoryManager().getHistory());
 
         System.out.println("\n-----------------------------------------------------------------------");
 
-        System.out.println("Проверка удаления из истории InMemoryHistoryManager просмотра первой задачи id=0 после " +
+        System.out.println("Проверка удаления из истории project.InMemoryHistoryManager просмотра первой задачи id=0 после " +
                 "удаления самой задачи\n");
         fileBackedTaskManager.deleteByIdTask(0);
         System.out.println(fileBackedTaskManager.getHistoryManager().getHistory());
 
         System.out.println("\n-----------------------------------------------------------------------");
 
-        System.out.println("Проверка удаления из истории InMemoryHistoryManager просмотра второго эпика id=4 и его " +
+        System.out.println("Проверка удаления из истории project.InMemoryHistoryManager просмотра второго эпика id=4 и его " +
                 "подзадач после удаления эпика\n");
         fileBackedTaskManager.deleteByIdEpic(4);
         System.out.println(fileBackedTaskManager.getHistoryManager().getHistory());

@@ -1,7 +1,9 @@
-import task.Epic;
-import task.Status;
-import task.Subtask;
-import task.Task;
+import project.InMemoryHistoryManager;
+import project.InMemoryTaskManager;
+import project.task.Epic;
+import project.task.Status;
+import project.task.Subtask;
+import project.task.Task;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
@@ -80,7 +82,7 @@ class InMemoryHistoryManagerTest {
         Subtask subtask3 = new Subtask("Третья подзадача",
                 "Описание третьей подзадачи", 7, Status.DONE, 45,
                 LocalDateTime.of(2025, 4, 4, 11, 0), 4);
-        //добавление в InMemoryHistoryManager
+        //добавление в project.InMemoryHistoryManager
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);

@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.*;
-import task.Status;
-import task.Subtask;
+import project.InMemoryTaskManager;
+import project.TaskManager;
+import project.task.Status;
+import project.task.Subtask;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,7 +34,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
     void testAreThereAnyIntersections() {
         Subtask subtask = new Subtask("Первая подзадача",
                 "Описание первой подзадачи", 3, Status.NEW, 15,
-                LocalDateTime.of(2025, 4, 4, 8, 0), 2);
+                LocalDateTime.of(2025, 4, 4, 9, 0), 2);
 
         InMemoryTaskManager inMemoryTaskManager = creatingAndFillingClassInMemoryTaskManager();
         boolean resultOfMethod = inMemoryTaskManager.hasIntersections(subtask);
