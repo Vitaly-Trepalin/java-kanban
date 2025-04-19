@@ -3,21 +3,18 @@ package project.handlers;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import project.handlers.typeAdapters.DurationTypeAdapter;
-import project.handlers.typeAdapters.LocalDateTimeTypeAdapter;
+import project.exception.AdditionAndUpdateException;
+import project.exception.ManagerSaveException;
 import project.task.Task;
 
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 public class TaskHandler extends BaseHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-
         Endpoint endpoint = getEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod());
 
         switch (endpoint) {
@@ -30,7 +27,6 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     private void addNewTaskHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         Task task = gson.fromJson(body, Task.class);
 
@@ -40,15 +36,19 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
         if (!jsonObject.has("id")) { //если id не указан, то добавление задачи, иначе обновление
             try {
                 taskManager.addNewTask(task);
-            } catch (RuntimeException e) {
+            } catch (AdditionAndUpdateException e) {
                 sendHasInteractions(exchange, e.getMessage()); //пересечение времени выполнения задач
+            } catch (ManagerSaveException e) {
+                sendErrorSavingDataToFile(exchange, e.getMessage()); //ошибка сохранения данных в файл
             }
             sendStatusCode(exchange);
         } else {
             try {
                 taskManager.taskUpdate(task);
-            } catch (RuntimeException e) {
+            } catch (AdditionAndUpdateException e) {
                 sendNotFound(exchange, e.getMessage()); //отсутствует задача для обновления с таким id
+            } catch (ManagerSaveException e) {
+                sendErrorSavingDataToFile(exchange, e.getMessage());
             }
             sendStatusCode(exchange);
         }
@@ -57,18 +57,20 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     private void deleteByIdTaskHandler(HttpExchange exchange) throws IOException {
         URI uri = exchange.getRequestURI();
         int taskId = Integer.parseInt(uri.getPath().split("/")[2]);
-        taskManager.deleteByIdTask(taskId);
+        try {
+            taskManager.deleteByIdTask(taskId);
+        } catch (ManagerSaveException e) {
+            sendErrorSavingDataToFile(exchange, e.getMessage());
+        }
         sendText(exchange, "Задача с id=" + taskId + " успешно удалена");
     }
 
     private void gettingListOfAllTasksHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         String taskList = gson.toJson(taskManager.gettingListOfAllTasks());
         sendText(exchange, taskList);
     }
 
     private void getTaskHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         URI uri = exchange.getRequestURI();
         int taskId = Integer.parseInt(uri.getPath().split("/")[2]);
         try {
@@ -79,13 +81,6 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
-    private static Gson getGson() {
-        return new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-                .setPrettyPrinting()
-                .create();
-    }
 
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
         String[] path = requestPath.split("/");

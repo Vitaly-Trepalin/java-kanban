@@ -9,13 +9,14 @@ import static project.task.Type.TASK;
 public class Task {
     private String name;
     private String description;
-    private int id;
+    private Integer id;
     private Status status;
     private Type type = TASK;
     private Duration duration;
     private LocalDateTime startTime;
 
-    public Task() {}
+    public Task() {
+    }
 
     public Task(String nameTask, String description, Status status, long duration, LocalDateTime startTime) {
         this.name = nameTask;

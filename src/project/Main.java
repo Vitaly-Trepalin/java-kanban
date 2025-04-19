@@ -78,18 +78,18 @@ public class Main {
         fileBackedTaskManager.deleteByIdSubtask(5); //блок проверки после удаления подзадачи по id
         printAllTasksSubtasksEpics();
 
+
         System.out.println("\n-----------------------------------------------------------------------");
 
         System.out.println("Проверка обновления второй подзадачи. Обновление подзадачи с id=6\n");
+
         // блок проверки обновления подзадачи с id=6
         Subtask subtask4 = new Subtask("Обновлённая вторая подзадача",
                 "Описание обновлённой второй подзадачи", Status.NEW, 30,
                 LocalDateTime.of(2025, 4, 4, 9, 0), 3);
         subtask4.setId(6);
         subtask4.setStatus(Status.IN_PROGRESS);
-
         fileBackedTaskManager.subtaskUpdate(subtask4);
-
         printAllTasksSubtasksEpics();
 
         System.out.println("\n-----------------------------------------------------------------------");
@@ -130,15 +130,15 @@ public class Main {
 
         System.out.println("\n-----------------------------------------------------------------------");
 
-        System.out.println("Проверка удаления из истории project.InMemoryHistoryManager просмотра первой задачи id=0 после " +
-                "удаления самой задачи\n");
+        System.out.println("Проверка удаления из истории project.InMemoryHistoryManager просмотра первой задачи id=0 " +
+                "после удаления самой задачи\n");
         fileBackedTaskManager.deleteByIdTask(0);
         System.out.println(fileBackedTaskManager.getHistoryManager().getHistory());
 
         System.out.println("\n-----------------------------------------------------------------------");
 
-        System.out.println("Проверка удаления из истории project.InMemoryHistoryManager просмотра второго эпика id=4 и его " +
-                "подзадач после удаления эпика\n");
+        System.out.println("Проверка удаления из истории project.InMemoryHistoryManager просмотра второго эпика id=4 " +
+                "и его подзадач после удаления эпика\n");
         fileBackedTaskManager.deleteByIdEpic(4);
         System.out.println(fileBackedTaskManager.getHistoryManager().getHistory());
 
@@ -150,5 +150,4 @@ public class Main {
         System.out.println(fileBackedTaskManager.gettingListOfAllEpic());
         System.out.println(fileBackedTaskManager.gettingListOfAllSubtask());
     }
-
 }

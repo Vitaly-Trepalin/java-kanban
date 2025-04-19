@@ -36,6 +36,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         for (Task epic : getEpics().values()) {
             listOfAllTasks.append(epic.toString()).append("\n");
         }
+
         for (Task subtask : getSubtasks().values()) {
             listOfAllTasks.append(subtask.toString()).append("\n");
         }
@@ -44,7 +45,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             Files.writeString(file.toPath(),
                     listOfAllTasks.toString(), StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка ввода-вывода");
+            throw new ManagerSaveException("Ошибка сохранения данных в файл");
         }
     }
 
@@ -92,7 +93,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return fileBackedTaskManager;
     }
 
-    public static Task fromString(String value) {
+    private static Task fromString(String value) {
         String[] objectFields = value.split(",", 8); //получение объектов Task из строки
 
         int id = Integer.parseInt(objectFields[0]);
@@ -122,7 +123,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return null;
     }
 
-    public static Type getType(String enumerationElement) {
+    private static Type getType(String enumerationElement) {
         if (enumerationElement.equals(TASK.toString())) { //получение типа из строки
             return TASK;
         } else if (enumerationElement.equals(EPIC.toString())) {
@@ -133,7 +134,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         throw new RuntimeException("Нет такого типа задачи");
     }
 
-    public static Status getStatus(String enumerationElement) {
+    private static Status getStatus(String enumerationElement) {
         if (enumerationElement.equals(NEW.toString())) { //получение статуса из строки
             return NEW;
         } else if (enumerationElement.equals(IN_PROGRESS.toString())) {

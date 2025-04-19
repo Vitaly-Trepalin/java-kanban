@@ -3,15 +3,13 @@ package project.handlers;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import project.handlers.typeAdapters.DurationTypeAdapter;
-import project.handlers.typeAdapters.LocalDateTimeTypeAdapter;
+import project.exception.AdditionAndUpdateException;
+import project.exception.ManagerSaveException;
 import project.task.Subtask;
 
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
 
@@ -29,7 +27,6 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     private void addNewSubtaskHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         Subtask subtask = gson.fromJson(body, Subtask.class);
 
@@ -39,16 +36,20 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
         if (!jsonObject.has("id")) { //если id не указан, то добавление подзадачи, иначе обновление
             try {
                 taskManager.addNewSubtask(subtask);
-            } catch (RuntimeException e) {
+            } catch (AdditionAndUpdateException e) {
                 sendHasInteractions(exchange, e.getMessage()); //пересечение времени выполнения задач или отсутствует
                 // требуемый эпик
+            } catch (ManagerSaveException e) {
+                sendErrorSavingDataToFile(exchange, e.getMessage());
             }
             sendStatusCode(exchange);
         } else {
             try {
                 taskManager.subtaskUpdate(subtask);
-            } catch (RuntimeException e) {
+            } catch (AdditionAndUpdateException e) {
                 sendNotFound(exchange, e.getMessage()); //отсутствует подзадача для обновления с таким id
+            } catch (ManagerSaveException e) {
+                sendErrorSavingDataToFile(exchange, e.getMessage());
             }
             sendStatusCode(exchange);
         }
@@ -57,18 +58,20 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
     private void deleteByIdSubtaskHandler(HttpExchange exchange) throws IOException {
         URI uri = exchange.getRequestURI();
         int taskId = Integer.parseInt(uri.getPath().split("/")[2]);
-        taskManager.deleteByIdSubtask(taskId);
+        try {
+            taskManager.deleteByIdSubtask(taskId);
+        } catch (ManagerSaveException e) {
+            sendErrorSavingDataToFile(exchange, e.getMessage());
+        }
         sendText(exchange, "Подзадача с id=" + taskId + " успешно удалена");
     }
 
     private void gettingListOfAllSubtasksHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         String taskList = gson.toJson(taskManager.gettingListOfAllSubtask());
         sendText(exchange, taskList);
     }
 
     private void getSubtaskHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         URI uri = exchange.getRequestURI();
         int taskId = Integer.parseInt(uri.getPath().split("/")[2]);
         try {
@@ -77,14 +80,6 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
         } catch (NullPointerException e) {
             sendNotFound(exchange, "Такая подзадача не существует");
         }
-    }
-
-    private static Gson getGson() {
-        return new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-                .setPrettyPrinting()
-                .create();
     }
 
     private Endpoint getEndpoint(String requestPath, String requestMethod) {

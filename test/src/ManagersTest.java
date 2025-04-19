@@ -4,10 +4,12 @@ import project.HistoryManager;
 import project.Managers;
 import project.TaskManager;
 
+import java.io.IOException;
+
 class ManagersTest {
 
     @Test
-    void checkGetDefaultTaskManager() {
+    void checkGetDefaultTaskManager() throws IOException {
         TaskManager taskManager = Managers.getDefault();
 
         Assertions.assertNotNull(taskManager, "менеджер задач не проинициализирован");

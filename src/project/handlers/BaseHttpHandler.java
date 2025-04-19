@@ -1,5 +1,6 @@
 package project.handlers;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import project.HttpTaskServer;
 import project.TaskManager;
@@ -9,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 public class BaseHttpHandler {
     TaskManager taskManager = HttpTaskServer.getTaskManager();
+    Gson gson = HttpTaskServer.getGson();
 
     protected void sendText(HttpExchange exchange, String text) throws IOException {
         exchange.sendResponseHeaders(200, 0);

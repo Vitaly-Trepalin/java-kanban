@@ -1,17 +1,13 @@
 package project.handlers;
 
-import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import project.handlers.typeAdapters.DurationTypeAdapter;
-import project.handlers.typeAdapters.LocalDateTimeTypeAdapter;
+import project.exception.ManagerSaveException;
 import project.task.Epic;
 
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
     @Override
@@ -29,28 +25,33 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     private void addNewEpicHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         Epic epic = gson.fromJson(body, Epic.class);
-        taskManager.addNewEpic(epic);
+        try {
+            taskManager.addNewEpic(epic);
+        } catch (ManagerSaveException e) {
+            sendErrorSavingDataToFile(exchange, e.getMessage());
+        }
         sendStatusCode(exchange);
     }
 
     private void deleteByIdEpicHandler(HttpExchange exchange) throws IOException {
         URI uri = exchange.getRequestURI();
         int epicId = Integer.parseInt(uri.getPath().split("/")[2]);
-        taskManager.deleteByIdEpic(epicId);
+        try {
+            taskManager.deleteByIdEpic(epicId);
+        } catch (ManagerSaveException e) {
+            sendErrorSavingDataToFile(exchange, e.getMessage());
+        }
         sendText(exchange, "Эпик с id=" + epicId + " успешно удален");
     }
 
     private void gettingListOfAllEpicsHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         String taskList = gson.toJson(taskManager.gettingListOfAllEpic());
         sendText(exchange, taskList);
     }
 
     private void getEpicHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         URI uri = exchange.getRequestURI();
         int epicId = Integer.parseInt(uri.getPath().split("/")[2]);
         try {
@@ -62,7 +63,6 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     private void getSubtasksEpicHandler(HttpExchange exchange) throws IOException {
-        Gson gson = getGson();
         URI uri = exchange.getRequestURI();
         int epicId = Integer.parseInt(uri.getPath().split("/")[2]);
         try {
@@ -72,14 +72,6 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
         } catch (NullPointerException | IOException e) {
             sendNotFound(exchange, "Такой эпик не существует");
         }
-    }
-
-    private static Gson getGson() {
-        return new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-                .setPrettyPrinting()
-                .create();
     }
 
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
