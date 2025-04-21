@@ -1,8 +1,8 @@
-package task;
+package project.task;
 
 import java.time.LocalDateTime;
 
-import static task.Type.SUBTASK;
+import static project.task.Type.SUBTASK;
 
 public class Subtask extends Task {
 

@@ -1,9 +1,11 @@
-import exception.ManagerSaveException;
+import project.FileBackedTaskManager;
+import project.TaskManager;
+import project.exception.ManagerSaveException;
 import org.junit.jupiter.api.*;
-import task.Epic;
-import task.Status;
-import task.Subtask;
-import task.Task;
+import project.task.Epic;
+import project.task.Status;
+import project.task.Subtask;
+import project.task.Task;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +19,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<TaskManager> {
     public FileBackedTaskManagerTest() throws IOException {
     }
 
-    public FileBackedTaskManager creatingAndFillingClassFileBackedTaskManager() throws IOException {
+    public FileBackedTaskManager creatingAndFillingClassFileBackedTaskManager() {
         FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
         Task task1 = new Task("Первая задача", "Описание первой задачи", Status.NEW, 30,
                 LocalDateTime.of(2025, 4, 4, 6, 0));
@@ -55,7 +57,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<TaskManager> {
     }
 
     @Test
-    void checkLoadFromFileTasks() throws IOException {
+    void checkLoadFromFileTasks() {
         String expectedResult =
                 "[0,TASK,Первая задача,NEW,Описание первой задачи,30,2025-04-04T06:00, " +
                         "1,TASK,Вторая задача,IN_PROGRESS,Описание второй задачи,40,2025-04-04T07:00]" +

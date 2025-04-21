@@ -1,5 +1,7 @@
-import exception.ManagerSaveException;
-import task.*;
+package project;
+
+import project.exception.ManagerSaveException;
+import project.task.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static task.Status.*;
-import static task.Type.*;
+import static project.task.Status.*;
+import static project.task.Type.*;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
@@ -34,6 +36,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         for (Task epic : getEpics().values()) {
             listOfAllTasks.append(epic.toString()).append("\n");
         }
+
         for (Task subtask : getSubtasks().values()) {
             listOfAllTasks.append(subtask.toString()).append("\n");
         }
@@ -42,7 +45,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             Files.writeString(file.toPath(),
                     listOfAllTasks.toString(), StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка ввода-вывода");
+            throw new ManagerSaveException("Ошибка сохранения данных в файл");
         }
     }
 
@@ -54,9 +57,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             int id = 0;
 
             for (int i = 1; i < objects.length; i++) { //заполнение данными хэш-таблиц tasks, epics, subtasks класса
-                // FileBackedTaskManager
+                // project.FileBackedTaskManager
                 Task task = fromString(objects[i]);
-                if (id < task.getId()) { //присвоение значения полю id класса FileBackedTaskManager
+                if (id < task.getId()) { //присвоение значения полю id класса project.FileBackedTaskManager
                     id = task.getId();
                     fileBackedTaskManager.setId(task.getId());
                 }
@@ -90,7 +93,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return fileBackedTaskManager;
     }
 
-    public static Task fromString(String value) {
+    private static Task fromString(String value) {
         String[] objectFields = value.split(",", 8); //получение объектов Task из строки
 
         int id = Integer.parseInt(objectFields[0]);
@@ -120,7 +123,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return null;
     }
 
-    public static Type getType(String enumerationElement) {
+    private static Type getType(String enumerationElement) {
         if (enumerationElement.equals(TASK.toString())) { //получение типа из строки
             return TASK;
         } else if (enumerationElement.equals(EPIC.toString())) {
@@ -131,7 +134,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         throw new RuntimeException("Нет такого типа задачи");
     }
 
-    public static Status getStatus(String enumerationElement) {
+    private static Status getStatus(String enumerationElement) {
         if (enumerationElement.equals(NEW.toString())) { //получение статуса из строки
             return NEW;
         } else if (enumerationElement.equals(IN_PROGRESS.toString())) {

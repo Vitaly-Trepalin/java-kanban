@@ -1,9 +1,11 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import task.Epic;
-import task.Status;
-import task.Subtask;
-import task.Task;
+import project.InMemoryTaskManager;
+import project.TaskManager;
+import project.task.Epic;
+import project.task.Status;
+import project.task.Subtask;
+import project.task.Task;
 
 import java.time.LocalDateTime;
 import java.util.*;

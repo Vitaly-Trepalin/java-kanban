@@ -1,6 +1,9 @@
-import task.Epic;
-import task.Subtask;
-import task.Task;
+package project;
+
+import project.exception.AdditionAndUpdateException;
+import project.task.Epic;
+import project.task.Subtask;
+import project.task.Task;
 
 import java.time.ZoneOffset;
 import java.util.*;
@@ -31,6 +34,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return getPrioritizedTasks().stream() //проверка пересечения задач и подзадач по времени методом
                 // наложения отрезков
+                .filter(task1 -> task.getId() != task1.getId())
                 .anyMatch(task1 -> {
                     long startTime1 = task.getStartTime().toEpochSecond(ZoneOffset.ofTotalSeconds(0));
                     long startTime2 = task1.getStartTime().toEpochSecond(ZoneOffset.ofTotalSeconds(0));
@@ -107,12 +111,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewTask(Task task) {
-        if (hasIntersections(task)) {
-            System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
-                    task + " не добавлена");
-            return;
-        }
         task.setId(increaseId());
+        if (hasIntersections(task)) {
+            id--;
+            throw new AdditionAndUpdateException("Время выполнения задачи пересекается с уже существующими задачами. " +
+                    "Задача " + task.getNameTask() + "\" не добавлена");
+        }
         tasks.put(task.getId(), task);
     }
 
@@ -125,12 +129,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewSubtask(Subtask subtask) {
-        if (hasIntersections(subtask)) {
-            System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
-                    subtask + " не добавлена");
-            return;
-        }
         subtask.setId(increaseId());
+        if (hasIntersections(subtask)) {
+            id--;
+            throw new AdditionAndUpdateException("Время выполнения задачи пересекается с уже существующими задачами. " +
+                    "Задача " + subtask.getNameTask() + "\" не добавлена");
+        }
 
         int epicId = subtask.getEpicId();
         if (epics.containsKey(epicId)) { //существуют ли эпик этой подзадачи
@@ -140,26 +144,25 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setSubtasks(subtaskList);
             updateStatusDurationStartTimeEndTimeOfTheEpic(epic);
         } else {
-            System.out.println("Эпика с такой подзадачей нет");
-            return;
+            id--;
+            throw new AdditionAndUpdateException("Эпика с такой подзадачей нет. Epic \"" +
+                    subtask.getNameTask() + "\" не добавлена");
         }
-
         subtasks.put(subtask.getId(), subtask);
     }
 
     @Override
     public void taskUpdate(Task task) {
         if (hasIntersections(task)) {
-            System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
-                    task + " не обновлена");
-            return;
+            throw new AdditionAndUpdateException("Время выполнения задачи пересекается с уже существующими задачами. " +
+                    "Задача " + task.getNameTask() + " не добавлена");
         }
         if (tasks.containsKey(task.getId())) {
             tasks.put(task.getId(), task);
         } else {
-            System.out.println("Задачи с id = " + task.getId() + " в списке задач нет. Обновление невозможно");
+            throw new AdditionAndUpdateException("Задачи с id=\"" +
+                    task.getId() + "\" в списке задач нет. Обновление невозможно");
         }
-
     }
 
     @Override
@@ -167,17 +170,21 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
         } else {
-            System.out.println("Эпика с id = " + epic.getId() + " в списке задач нет. Обновление невозможно");
+            throw new AdditionAndUpdateException("Эпика с id = " + epic.getId() + " в списке задач нет. " +
+                    "Обновление невозможно");
         }
 
     }
 
     @Override
     public void subtaskUpdate(Subtask subtask) {
+        if (!epics.containsKey(subtask.getEpicId())) {
+            throw new AdditionAndUpdateException("Подзадача ссылается на несуществующий эпик. Эпика с id=" +
+                    subtask.getEpicId() + " нет");
+        }
         if (hasIntersections(subtask)) {
-            System.out.println("Время выполнения задачи пересекается с уже существующими задачами. Задача " +
-                    subtask + " не обновлена");
-            return;
+            throw new AdditionAndUpdateException("Время выполнения задачи пересекается с уже существующими задачами. " +
+                    "Задача " + subtask.getNameTask() + " не добавлена");
         }
         Epic epic = epics.get(subtask.getEpicId()); //блок кода актуализации статуса эпика, в который входит подзадача
         List<Subtask> listOfSubtasksOfTheEpic = epic.getSubtasks();
@@ -201,8 +208,8 @@ public class InMemoryTaskManager implements TaskManager {
             epics.put(epic.getId(), epic);
             subtasks.put(subtask.getId(), subtask);
         } else {
-            System.out.println("Подзадача ссылается на эпик, в списке подзадач которого, нет подзадачи с id = " +
-                    subtask.getId() + ". Обновление данной подзадачи невозможно.");
+            throw new AdditionAndUpdateException("Подзадача ссылается на эпик, в списке подзадач которого, " +
+                    "нет подзадачи с id=" + subtask.getId() + ". Обновление данной подзадачи невозможно.");
         }
     }
 
@@ -216,7 +223,8 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteByIdEpic(int id) {
         List<Subtask> subtasksOfTheEpicBeingDeleted = epics.get(id).getSubtasks();
         for (Subtask subtask : subtasksOfTheEpicBeingDeleted) { //блок удаления подзадач из истории
-            // объекта HistoryManager и удаления подзадач из коллекции subtasks объекта InMemoryTaskManager
+            // объекта project.HistoryManager и удаления подзадач из коллекции subtasks объекта
+            // project.InMemoryTaskManager
             historyManager.remove(subtask.getId());
             subtasks.remove(subtask.getId());
         }
